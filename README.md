@@ -3,7 +3,7 @@ Gestor de restaurantes
 
 Trabajo Practico Integrador - Aplicaciones Interactivas
 
-![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk&logoColor=white)
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-Build-C71A36?logo=apachemaven&logoColor=white)
 ![Status](https://img.shields.io/badge/Estado-En%20desarrollo-yellow)
@@ -83,9 +83,13 @@ src/
 
 2. Configurar la base de datos en `src/main/resources/application.properties`
    ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/[nombre_db]
-   spring.datasource.username=[usuario]
-   spring.datasource.password=[password]
+   spring.application.name=bocado
+    spring.datasource.url=jdbc:mysql://localhost:3306/Bocado
+    spring.datasource.username=root
+    spring.datasource.password=equipo
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=true
+    spring.jpa.properties.hibernate.format_sql=true
    ```
 
 3. Compilar y ejecutar
@@ -107,9 +111,9 @@ src/
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| GET | `/api/[recurso]` | Lista todos los [recursos] |
+| GET | `/api/turnos` | Lista todos los [recursos] |
 | GET | `/api/[recurso]/{id}` | Obtiene un [recurso] por id |
-| POST | `/api/[recurso]` | Crea un nuevo [recurso] |
+| POST | `/api/turnos/altaTurno` | Crea un nuevo turno en estado PENDIENTE|
 | PUT | `/api/[recurso]/{id}` | Actualiza un [recurso] |
 | DELETE | `/api/[recurso]/{id}` | Elimina un [recurso] |
 
