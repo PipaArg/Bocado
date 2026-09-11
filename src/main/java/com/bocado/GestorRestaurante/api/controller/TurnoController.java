@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
         }
 
         @PostMapping
-        public ResponseEntity<TurnoResponse> crearTurno(TurnoRequest request) {
+        public ResponseEntity<TurnoResponse> crearTurno( @RequestBody TurnoRequest request) {
             TurnoResponse response = turnoService.crearTurno(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
