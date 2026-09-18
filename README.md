@@ -109,13 +109,17 @@ src/
 
 ## 📌 Endpoints principales
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/turnos` | Lista todos los [recursos] |
-| GET | `/api/[recurso]/{id}` | Obtiene un [recurso] por id |
-| POST | `/api/turnos/altaTurno` | Crea un nuevo turno en estado PENDIENTE|
-| PUT | `/api/[recurso]/{id}` | Actualiza un [recurso] |
-| DELETE | `/api/[recurso]/{id}` | Elimina un [recurso] |
+Turnos
+
+| Método | Endpoint | Descripción | Body / Params |
+|--------|----------|-------------|----------------|
+| `POST` | `/api/turnos/crearTurno` | Crea un nuevo turno en estado `PENDIENTE` | JSON: `fecha`, `hora`, `cantidadComensales`, `nombreCliente`, `email` |
+| `GET` | `/api/turnos/listarTurnos` | Lista todos los turnos | - |
+| `GET` | `/api/turnos/obtenerTurno/{id}` | Obtiene un turno por su ID | Path param: `id` |
+| `PUT` | `/api/turnos/actualizarTurno/{id}` | Actualiza los datos de un turno existente | Path param: `id` + JSON con los datos a actualizar |
+| `PATCH` | `/api/turnos/cambiarEstado/{id}` | Cambia el estado de un turno (`PENDIENTE`, `CONFIRMADO`, `CANCELADO`) | Path param: `id` + Query param: `estado` |
+| `DELETE` | `/api/turnos/eliminarTurno/{id}` | Elimina un turno | Path param: `id` |
+
 
 
 ---
