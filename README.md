@@ -71,33 +71,28 @@ src/
 
 - Java JDK 25 o superior
 - Maven 
-- [PostgreSQL / MySQL] instalado y corriendo 
+- MySQL instalado y corriendo 
 
 ## 🚀 Instalación y ejecución
 
-1. Clonar el repositorio
-   ```bash
-   git clone https://github.com/[usuario]/[repositorio].git
-   cd [repositorio]
-   ```
 
-2. Configurar la base de datos en `src/main/resources/application.properties`
+1. Configurar la base de datos en `src/main/resources/application.properties`
    ```properties
    spring.application.name=bocado
     spring.datasource.url=jdbc:mysql://localhost:3306/Bocado
     spring.datasource.username=root
-    spring.datasource.password=equipo
+    spring.datasource.password=CONTRASENA CONFIGURADA EN MYSQL
     spring.jpa.hibernate.ddl-auto=update
     spring.jpa.show-sql=true
     spring.jpa.properties.hibernate.format_sql=true
    ```
 
-3. Compilar y ejecutar
+2. Compilar y ejecutar
    ```bash
    ./mvnw spring-boot:run
    ```
 
-4. La aplicación quedará disponible en:
+4. La aplicación quedará disponible para ejecutar en postman en:
    ```
    http://localhost:8080
    ```
