@@ -5,6 +5,8 @@ import com.bocado.GestorRestaurante.api.dto.ClienteResponse;
 import com.bocado.GestorRestaurante.api.service.ClienteService;
 
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +22,7 @@ public class ClienteController {
     }
 
     @PostMapping("/crearCliente")
-    public ResponseEntity<ClienteResponse> crearCliente(@RequestBody ClienteRequest request) {
+    public ResponseEntity<ClienteResponse> crearCliente(@Valid @RequestBody ClienteRequest request) {
         ClienteResponse response = clienteService.crearCliente(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

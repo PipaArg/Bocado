@@ -2,6 +2,7 @@ package com.bocado.GestorRestaurante.api.service;
 
 import com.bocado.GestorRestaurante.api.dto.ClienteRequest;
 import com.bocado.GestorRestaurante.api.dto.ClienteResponse;
+import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
 import com.bocado.GestorRestaurante.api.model.Cliente;
 import com.bocado.GestorRestaurante.api.repository.ClienteRepository;
 
@@ -35,7 +36,7 @@ public class ClienteService {
 
     public ClienteResponse obtenerClientePorId(Long id) {
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + id));
         return new ClienteResponse(cliente);
     }
 }

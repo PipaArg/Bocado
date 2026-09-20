@@ -7,6 +7,8 @@ import com.bocado.GestorRestaurante.api.dto.PlatoResponse;
 import com.bocado.GestorRestaurante.api.service.PlatoService;
 
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +24,19 @@ public class PlatoController {
     }
 
     @PostMapping("/hamburguesas")
-    public ResponseEntity<PlatoResponse> crearHamburguesa(@RequestBody HamburguesaRequest request) {
+    public ResponseEntity<PlatoResponse> crearHamburguesa(@Valid @RequestBody HamburguesaRequest request) {
         PlatoResponse response = platoService.crearHamburguesa(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/pizzas")
-    public ResponseEntity<PlatoResponse> crearPizza(@RequestBody PizzaRequest request) {
+    public ResponseEntity<PlatoResponse> crearPizza(@Valid @RequestBody PizzaRequest request) {
         PlatoResponse response = platoService.crearPizza(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/milanesas")
-    public ResponseEntity<PlatoResponse> crearMilanesa(@RequestBody MilanesaRequest request) {
+    public ResponseEntity<PlatoResponse> crearMilanesa(@Valid @RequestBody MilanesaRequest request) {
         PlatoResponse response = platoService.crearMilanesa(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
