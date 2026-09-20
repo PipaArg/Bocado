@@ -1,5 +1,6 @@
 package com.bocado.GestorRestaurante.api.controller;
 
+import com.bocado.GestorRestaurante.api.dto.PagoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoResponse;
 import com.bocado.GestorRestaurante.api.model.EstadoTurno;
@@ -56,5 +57,18 @@ public class TurnoController {
         return ResponseEntity.noContent().build();
     }
 
+    // Relacion muchos a muchos: agrega un Plato pre-pedido a un Turno existente.
+    @PostMapping("/{turnoId}/platos/{platoId}")
+    public ResponseEntity<TurnoResponse> agregarPlato(@PathVariable Long turnoId, @PathVariable Long platoId) {
+        TurnoResponse response = turnoService.agregarPlato(turnoId, platoId);
+        return ResponseEntity.ok(response);
+    }
+
+    // Relacion uno a uno: crea y asocia un Pago al Turno.
+    @PostMapping("/{turnoId}/pago")
+    public ResponseEntity<TurnoResponse> asociarPago(@PathVariable Long turnoId, @RequestBody PagoRequest request) {
+        TurnoResponse response = turnoService.asociarPago(turnoId, request);
+        return ResponseEntity.ok(response);
+    }
 
 }

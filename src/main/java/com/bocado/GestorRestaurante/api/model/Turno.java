@@ -2,8 +2,11 @@ package com.bocado.GestorRestaurante.api.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,10 +22,22 @@ public class Turno {
 
     private Integer cantidadComensales;
 
-    private String nombreCliente;
-
-    private String email;
-
     @Enumerated(EnumType.STRING)
     private EstadoTurno estado;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
+    @OneToOne
+    @JoinColumn(name = "pago_id", unique = true)
+    private Pago pago;
+
+    @ManyToMany
+    @JoinTable(
+            name = "turnos_platos",
+            joinColumns = @JoinColumn(name = "turno_id"),
+            inverseJoinColumns = @JoinColumn(name = "plato_id")
+    )
+    private List<Plato> platos = new ArrayList<>();
 }
