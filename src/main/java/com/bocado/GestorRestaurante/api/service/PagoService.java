@@ -2,6 +2,7 @@ package com.bocado.GestorRestaurante.api.service;
 
 import com.bocado.GestorRestaurante.api.dto.PagoRequest;
 import com.bocado.GestorRestaurante.api.dto.PagoResponse;
+import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
 import com.bocado.GestorRestaurante.api.model.EstadoPago;
 import com.bocado.GestorRestaurante.api.model.Pago;
 import com.bocado.GestorRestaurante.api.repository.PagoRepository;
@@ -28,7 +29,7 @@ public class PagoService {
 
     public PagoResponse cambiarEstado(Long id, EstadoPago estado) {
         Pago pago = pagoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Pago no encontrado con id: " + id));
         pago.setEstado(estado);
         return new PagoResponse(pagoRepository.save(pago));
     }

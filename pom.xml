@@ -59,6 +59,16 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!--
+    	Agregamos esta dependencia para validar los datos
+    	que recibimos desde Postman. Nos permite usar anotaciones como:
+    	@NotNull, @NotBlank, @Min, @Email y @Valid.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

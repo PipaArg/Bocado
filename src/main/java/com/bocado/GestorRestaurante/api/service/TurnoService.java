@@ -3,6 +3,7 @@ package com.bocado.GestorRestaurante.api.service;
 import com.bocado.GestorRestaurante.api.dto.PagoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoResponse;
+import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
 import com.bocado.GestorRestaurante.api.model.Cliente;
 import com.bocado.GestorRestaurante.api.model.EstadoTurno;
 import com.bocado.GestorRestaurante.api.model.Pago;
@@ -26,7 +27,7 @@ public class TurnoService {
 
     public TurnoResponse crearTurno(TurnoRequest request) {
         Cliente cliente = clienteRepository.findById(request.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con id: " + request.getClienteId()));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + request.getClienteId()));
 
         Turno turno = new Turno();
         turno.setFecha(request.getFecha());
@@ -49,16 +50,16 @@ public class TurnoService {
 
     public TurnoResponse obtenerTurnoPorId(Long id) {
         Turno turno = turnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + id));
         return new TurnoResponse(turno);
     }
 
     public TurnoResponse actualizarTurno(Long id, TurnoRequest request) {
         Turno turno = turnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + id));
 
         Cliente cliente = clienteRepository.findById(request.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con id: " + request.getClienteId()));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Cliente no encontrado con id: " + request.getClienteId()));
 
         turno.setFecha(request.getFecha());
         turno.setHora(request.getHora());
@@ -71,7 +72,7 @@ public class TurnoService {
 
     public TurnoResponse cambiarEstado(Long id, EstadoTurno estado) {
         Turno turno = turnoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado con id: " + id));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + id));
 
         turno.setEstado(estado);
         Turno turnoActualizado = turnoRepository.save(turno);
@@ -79,18 +80,29 @@ public class TurnoService {
     }
 
     public void eliminarTurno(Long id) {
+
+        /*
+         * Antes de eliminar, comprobamos si el turno existe.
+         *
+         * Si no existe, lanzamos una excepción específica.
+         * Así evitamos responder como si se hubiera eliminado.
+         */
+
         if (!turnoRepository.existsById(id)) {
-            throw new RuntimeException("Turno no encontrado con id: " + id);
+            throw new RecursoNoEncontradoException(
+                    "Turno no encontrado con id: " + id);
         }
+
+        // Solo eliminamos si el turno realmente existe.
         turnoRepository.deleteById(id);
     }
 
 
     public TurnoResponse agregarPlato(Long turnoId, Long platoId) {
         Turno turno = turnoRepository.findById(turnoId)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado con id: " + turnoId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + turnoId));
         Plato plato = platoRepository.findById(platoId)
-                .orElseThrow(() -> new RuntimeException("Plato no encontrado con id: " + platoId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Plato no encontrado con id: " + platoId));
 
         turno.getPlatos().add(plato);
         Turno turnoActualizado = turnoRepository.save(turno);
@@ -100,7 +112,7 @@ public class TurnoService {
 
     public TurnoResponse asociarPago(Long turnoId, PagoRequest request) {
         Turno turno = turnoRepository.findById(turnoId)
-                .orElseThrow(() -> new RuntimeException("Turno no encontrado con id: " + turnoId));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + turnoId));
 
         Pago pago = pagoService.crearPago(request);
         turno.setPago(pago);

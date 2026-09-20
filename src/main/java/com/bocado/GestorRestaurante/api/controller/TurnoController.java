@@ -6,6 +6,8 @@ import com.bocado.GestorRestaurante.api.dto.TurnoResponse;
 import com.bocado.GestorRestaurante.api.model.EstadoTurno;
 import com.bocado.GestorRestaurante.api.service.TurnoService;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,8 @@ public class TurnoController {
     }
 
     @PostMapping("/crearTurno")
-    public ResponseEntity<TurnoResponse> crearTurno( @RequestBody TurnoRequest request) {
+    public ResponseEntity<TurnoResponse> crearTurno(
+            @Valid @RequestBody TurnoRequest request) {
         TurnoResponse response = turnoService.crearTurno(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -40,7 +43,7 @@ public class TurnoController {
     }
 
     @PutMapping("/actualizarTurno/{id}")
-    public ResponseEntity<TurnoResponse> actualizarTurno(@PathVariable Long id, @RequestBody TurnoRequest request) {
+    public ResponseEntity<TurnoResponse> actualizarTurno(@PathVariable Long id, @Valid @RequestBody TurnoRequest request) {
         TurnoResponse response = turnoService.actualizarTurno(id, request);
         return ResponseEntity.ok(response);
     }
@@ -66,7 +69,7 @@ public class TurnoController {
 
     // Relacion uno a uno: crea y asocia un Pago al Turno.
     @PostMapping("/{turnoId}/pago")
-    public ResponseEntity<TurnoResponse> asociarPago(@PathVariable Long turnoId, @RequestBody PagoRequest request) {
+    public ResponseEntity<TurnoResponse> asociarPago(@PathVariable Long turnoId,@Valid @RequestBody PagoRequest request) {
         TurnoResponse response = turnoService.asociarPago(turnoId, request);
         return ResponseEntity.ok(response);
     }
