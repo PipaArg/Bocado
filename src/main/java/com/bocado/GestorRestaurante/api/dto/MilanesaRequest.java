@@ -1,14 +1,15 @@
 package com.bocado.GestorRestaurante.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.math.BigDecimal;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class MilanesaRequest {
-    private String nombre;
-    private String descripcion;
-    private BigDecimal precio;
+@EqualsAndHashCode(callSuper = true)
+public class MilanesaRequest extends PlatoRequest {
+
+    @NotBlank(message = "El tipo de carne es obligatorio")
     private String tipoCarne;
+
     private String guarnicion;
 }

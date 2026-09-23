@@ -1,14 +1,17 @@
 package com.bocado.GestorRestaurante.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import java.math.BigDecimal;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class HamburguesaRequest {
-    private String nombre;
-    private String descripcion;
-    private BigDecimal precio;
+@EqualsAndHashCode(callSuper = true)
+public class HamburguesaRequest extends PlatoRequest {
+
+    @NotNull(message = "Debe indicar si lleva queso")
     private Boolean conQueso;
+
+    @NotBlank(message = "El tipo de pan es obligatorio")
     private String tipoPan;
 }

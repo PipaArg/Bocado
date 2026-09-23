@@ -111,4 +111,25 @@ public class ManejadorGlobalErrores {
                 .body(respuesta);
     }
 
+
+    /*
+     * ERROR 409 - Valor ya existente
+     *
+     * Maneja los campos que no pueden ser duplicados debido a que
+     * se manejan por identidad unica.
+     *
+     * Ejemplo: Crear "Pizza muzzarella" cuando ya existe otra "Pizza muzzarella".
+     */
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    public ResponseEntity<Map<String, Object>> manejarDuplicado(
+            RecursoDuplicadoException ex) {
+
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("status", 409);
+        respuesta.put("mensaje", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(respuesta);
+    }
 }
