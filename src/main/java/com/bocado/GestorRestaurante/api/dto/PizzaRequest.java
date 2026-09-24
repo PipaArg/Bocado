@@ -1,14 +1,16 @@
 package com.bocado.GestorRestaurante.api.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
-import java.math.BigDecimal;
+import lombok.EqualsAndHashCode;
 
 @Data
-public class PizzaRequest {
-    private String nombre;
-    private String descripcion;
-    private BigDecimal precio;
+@EqualsAndHashCode(callSuper = true)
+public class PizzaRequest extends PlatoRequest {
+
+    @NotBlank(message = "El tamaño es obligatorio")
     private String tamanio;
+
+    @NotBlank(message = "El tipo de masa es obligatorio")
     private String tipoMasa;
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -31,9 +32,15 @@ public abstract class Plato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // No se deberia poder repetir el nombre de 2 platos
+    @Column(nullable = false, unique = true)
     private String nombre;
+
     private String descripcion;
+    //No puede ser 0 el precio
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
+
 
     @ManyToMany(mappedBy = "platos")
     @JsonIgnore
