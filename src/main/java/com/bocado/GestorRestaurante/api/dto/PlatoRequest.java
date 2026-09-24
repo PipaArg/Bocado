@@ -13,6 +13,7 @@ public abstract class PlatoRequest {
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
+    @NotBlank(message = "La descripción es obligatoria")
     private String descripcion;
 
     @NotNull(message = "El precio es obligatorio")
