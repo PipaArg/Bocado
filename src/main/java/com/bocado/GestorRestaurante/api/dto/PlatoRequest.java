@@ -8,7 +8,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public abstract class PlatoRequest {
+public class PlatoRequest {
 
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;

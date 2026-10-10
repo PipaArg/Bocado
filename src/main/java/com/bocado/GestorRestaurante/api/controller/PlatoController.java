@@ -1,8 +1,6 @@
 package com.bocado.GestorRestaurante.api.controller;
 
-import com.bocado.GestorRestaurante.api.dto.HamburguesaRequest;
-import com.bocado.GestorRestaurante.api.dto.MilanesaRequest;
-import com.bocado.GestorRestaurante.api.dto.PizzaRequest;
+import com.bocado.GestorRestaurante.api.dto.PlatoRequest;
 import com.bocado.GestorRestaurante.api.dto.PlatoResponse;
 import com.bocado.GestorRestaurante.api.service.PlatoService;
 
@@ -24,21 +22,10 @@ public class PlatoController {
         this.platoService = platoService;
     }
 
-    @PostMapping("/hamburguesas")
-    public ResponseEntity<PlatoResponse> crearHamburguesa(@Valid @RequestBody HamburguesaRequest request) {
-        PlatoResponse response = platoService.crearHamburguesa(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/pizzas")
-    public ResponseEntity<PlatoResponse> crearPizza(@Valid @RequestBody PizzaRequest request) {
-        PlatoResponse response = platoService.crearPizza(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    @PostMapping("/milanesas")
-    public ResponseEntity<PlatoResponse> crearMilanesa(@Valid @RequestBody MilanesaRequest request) {
-        PlatoResponse response = platoService.crearMilanesa(request);
+    @PostMapping("/crearPlato")
+    public ResponseEntity<PlatoResponse> crearPlato(
+            @Valid @RequestBody PlatoRequest request) {
+        PlatoResponse response = platoService.crearPlato(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -46,5 +33,23 @@ public class PlatoController {
     public ResponseEntity<List<PlatoResponse>> listarPlatos() {
         List<PlatoResponse> response = platoService.listarPlatos();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/obtenerPlato/{id}")
+    public ResponseEntity<PlatoResponse> obtenerPlatoPorId(@PathVariable Long id) {
+        PlatoResponse response = platoService.obtenerPlatoPorId(id);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/actualizarPlato/{id}")
+    public ResponseEntity<PlatoResponse> actualizarPlato(@PathVariable Long id, @Valid @RequestBody PlatoRequest request) {
+        PlatoResponse response = platoService.actualizarPlato(id, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/eliminarPlato/{id}")
+    public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
+        platoService.eliminarPlato(id);
+        return ResponseEntity.noContent().build();
     }
 }

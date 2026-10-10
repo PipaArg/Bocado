@@ -1,13 +1,10 @@
 package com.bocado.GestorRestaurante.api.service;
 
-import com.bocado.GestorRestaurante.api.dto.HamburguesaRequest;
-import com.bocado.GestorRestaurante.api.dto.MilanesaRequest;
-import com.bocado.GestorRestaurante.api.dto.PizzaRequest;
+import com.bocado.GestorRestaurante.api.dto.PlatoRequest;
 import com.bocado.GestorRestaurante.api.dto.PlatoResponse;
 import com.bocado.GestorRestaurante.api.exception.RecursoDuplicadoException;
-import com.bocado.GestorRestaurante.api.model.Hamburguesa;
-import com.bocado.GestorRestaurante.api.model.Milanesa;
-import com.bocado.GestorRestaurante.api.model.Pizza;
+import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
+import com.bocado.GestorRestaurante.api.model.Plato;
 import com.bocado.GestorRestaurante.api.repository.PlatoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -20,47 +17,44 @@ import java.util.List;
 public class PlatoService {
     private final PlatoRepository platoRepository;
 
-    public PlatoResponse crearHamburguesa(HamburguesaRequest request) {
-        String nombre = request.getNombre().trim();
-        validarNombreDisponible(nombre);
+    public  PlatoResponse crearPlato(PlatoRequest request) {
 
-        Hamburguesa hamburguesa = new Hamburguesa();
-        hamburguesa.setNombre(nombre);
-        hamburguesa.setDescripcion(request.getDescripcion());
-        hamburguesa.setPrecio(request.getPrecio());
-        hamburguesa.setConQueso(request.getConQueso());
-        hamburguesa.setTipoPan(request.getTipoPan());
+        Plato plato = new Plato();
+        plato.setNombre(request.getNombre());
+        plato.setDescripcion(request.getDescripcion());
+        plato.setPrecio(request.getPrecio());
 
-        return new PlatoResponse(platoRepository.save(hamburguesa));
+        Plato platoGuardado = platoRepository.save(plato);
+
+        return new PlatoResponse(platoGuardado);
     }
 
-    public PlatoResponse crearPizza(PizzaRequest request) {
-        String nombre = request.getNombre().trim();
-        validarNombreDisponible(nombre);
-
-        Pizza pizza = new Pizza();
-        pizza.setNombre(nombre);
-        pizza.setDescripcion(request.getDescripcion());
-        pizza.setPrecio(request.getPrecio());
-        pizza.setTamanio(request.getTamanio());
-        pizza.setTipoMasa(request.getTipoMasa());
-
-        return new PlatoResponse(platoRepository.save(pizza));
+    public PlatoResponse obtenerPlatoPorId(Long id) {
+        Plato plato = platoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("plato no encontrado con id: " + id));
+        return new PlatoResponse(plato);
     }
 
-    public PlatoResponse crearMilanesa(MilanesaRequest request) {
-        String nombre = request.getNombre().trim();
-        validarNombreDisponible(nombre);
+    public PlatoResponse actualizarPlato(Long id, PlatoRequest request) {
+        Plato plato = platoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException("plato no encontrado con id: " + id));
 
-        Milanesa milanesa = new Milanesa();
-        milanesa.setNombre(nombre);
-        milanesa.setDescripcion(request.getDescripcion());
-        milanesa.setPrecio(request.getPrecio());
-        milanesa.setTipoCarne(request.getTipoCarne());
-        milanesa.setGuarnicion(request.getGuarnicion());
+        plato.setPrecio(request.getPrecio());
+        plato.setDescripcion(request.getDescripcion());
+        plato.setNombre(request.getNombre());
 
-        return new PlatoResponse(platoRepository.save(milanesa));
+        Plato platoActualizado = platoRepository.save(plato);
+        return new PlatoResponse(platoActualizado);
     }
+
+    public void eliminarPlato(Long id) {
+        if (!platoRepository.existsById(id)) {
+            throw new RecursoNoEncontradoException(
+                    "Plato no encontrado con id: " + id);
+        }
+        platoRepository.deleteById(id);
+    }
+
 
     public List<PlatoResponse> listarPlatos() {
         return platoRepository.findAll()
@@ -68,6 +62,7 @@ public class PlatoService {
                 .map(PlatoResponse::new)
                 .toList();
     }
+
 
     private void validarNombreDisponible(String nombre) {
         if (platoRepository.existsByNombreIgnoreCase(nombre)) {
