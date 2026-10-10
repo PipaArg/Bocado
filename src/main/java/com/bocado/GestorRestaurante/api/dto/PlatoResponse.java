@@ -21,7 +21,5 @@ public class PlatoResponse {
         this.nombre = plato.getNombre();
         this.descripcion = plato.getDescripcion();
         this.precio = plato.getPrecio();
-        this.tipo = plato.getTipo();
-        this.atributos = plato.atributosEspecificos();
     }
 }
