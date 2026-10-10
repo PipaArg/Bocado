@@ -133,10 +133,11 @@ Todas las peticiones y respuestas usan `Content-Type: application/json`.
 
 | Método | Endpoint | Descripción | Respuesta |
 |--------|----------|-------------|-----------|
-| `POST` | `/api/platos/hamburguesas` | Crea una hamburguesa | `201 Created` |
-| `POST` | `/api/platos/pizzas` | Crea una pizza | `201 Created` |
-| `POST` | `/api/platos/milanesas` | Crea una milanesa | `201 Created` |
+| `POST` | `/api/platos/crearPlato` | Crea un plato | `201 Created` |
 | `GET` | `/api/platos/listarPlatos` | Lista todos los platos | `200 OK` |
+| `GET` | `/api/platos/obtenerPlato/{id}` | Obtiene un plato por su id | `200 OK` |
+| `PUT` | `/api/platos/actualizarPlato/{id}` | Actualiza un plato existente | `200 OK` |
+| `DELETE` | `/api/platos/eliminarPlato/{id}` | Elimina un plato | `204 No Content` |
 
 ### Turnos — `/api/turnos`
 
