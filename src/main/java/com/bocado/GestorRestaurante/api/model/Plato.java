@@ -26,7 +26,7 @@ import java.util.Map;
 @DiscriminatorColumn(name = "tipo_plato")
 @Data
 @EqualsAndHashCode(exclude = "turnos")
-public abstract class Plato {
+public class Plato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
