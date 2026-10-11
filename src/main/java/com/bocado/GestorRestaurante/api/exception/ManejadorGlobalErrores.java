@@ -132,4 +132,44 @@ public class ManejadorGlobalErrores {
                 .status(HttpStatus.CONFLICT)
                 .body(respuesta);
     }
+
+
+    /*
+     * ERROR 502 - FALLO CON MERCADO PAGO
+     *
+     * Se ejecuta cuando no se puede crear o consultar un pago
+     * en Mercado Pago (token invalido, API caida, etc.).
+     */
+    @ExceptionHandler(MercadoPagoException.class)
+    public ResponseEntity<Map<String, Object>> manejarMercadoPago(
+            MercadoPagoException ex) {
+
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("status", 502);
+        respuesta.put("mensaje", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_GATEWAY)
+                .body(respuesta);
+    }
+
+
+    /*
+     * ERROR 400 - OPERACION INVALIDA
+     *
+     * Se ejecuta cuando la operacion no se puede hacer en el estado actual.
+     * Ejemplo: cobrar un turno que no tiene platos.
+     */
+    @ExceptionHandler(OperacionInvalidaException.class)
+    public ResponseEntity<Map<String, Object>> manejarOperacionInvalida(
+            OperacionInvalidaException ex) {
+
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("status", 400);
+        respuesta.put("mensaje", ex.getMessage());
+
+        return ResponseEntity
+                .badRequest()
+                .body(respuesta);
+    }
 }

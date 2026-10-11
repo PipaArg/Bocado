@@ -1,6 +1,10 @@
 package com.bocado.GestorRestaurante.api.controller;
 
+import com.bocado.GestorRestaurante.api.dto.CheckoutResponse;
+import com.bocado.GestorRestaurante.api.dto.CobroManualRequest;
 import com.bocado.GestorRestaurante.api.dto.PagoRequest;
+import com.bocado.GestorRestaurante.api.dto.PagoResponse;
+import com.bocado.GestorRestaurante.api.dto.PedidoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoRequest;
 import com.bocado.GestorRestaurante.api.dto.TurnoResponse;
 import com.bocado.GestorRestaurante.api.model.EstadoTurno;
@@ -12,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 @RequestMapping("/api/turnos")
 public class TurnoController {
@@ -67,10 +71,46 @@ public class TurnoController {
         return ResponseEntity.ok(response);
     }
 
+    // Pedido de la mesa: reemplaza TODOS los platos del turno (agregar, quitar, cambiar cantidades). Idempotente.
+    // Body: { "items": [ { "platoId": 1, "cantidad": 2 }, { "platoId": 4, "cantidad": 1 } ] }
+    @PutMapping("/{turnoId}/platos")
+    public ResponseEntity<TurnoResponse> reemplazarPlatos(
+            @PathVariable Long turnoId,
+            @Valid @RequestBody PedidoRequest request) {
+        return ResponseEntity.ok(turnoService.reemplazarPlatos(turnoId, request));
+    }
+
     // Relacion uno a uno: crea y asocia un Pago al Turno.
     @PostMapping("/{turnoId}/pago")
     public ResponseEntity<TurnoResponse> asociarPago(@PathVariable Long turnoId,@Valid @RequestBody PagoRequest request) {
         TurnoResponse response = turnoService.asociarPago(turnoId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    // Cerrar pago: calcula el total de los platos, genera el checkout de Mercado Pago y devuelve el link/QR.
+    @PostMapping("/{turnoId}/cerrar-pago")
+    public ResponseEntity<CheckoutResponse> cerrarPago(@PathVariable Long turnoId) {
+        CheckoutResponse response = turnoService.cerrarPago(turnoId);
+        return ResponseEntity.ok(response);
+    }
+
+    // Pagado en efectivo en la mesa: aprueba el pago, confirma el turno y envia el comprobante.
+    @PostMapping("/{turnoId}/pago-efectivo")
+    public ResponseEntity<PagoResponse> pagarEnEfectivo(@PathVariable Long turnoId) {
+        PagoResponse response = turnoService.pagarEnEfectivo(turnoId);
+        return ResponseEntity.ok(response);
+    }
+
+    /*
+     * Cobro hecho en la mesa (EFECTIVO o TARJETA). Lo usa la app del mozo y es idempotente:
+     * si el mismo cobro llega dos veces, la segunda devuelve el pago ya registrado.
+     * Body: { "metodo": "EFECTIVO" | "TARJETA", "cobradoEn": "2026-10-05T21:15:00" (opcional) }
+     */
+    @PostMapping("/{turnoId}/pago-manual")
+    public ResponseEntity<PagoResponse> registrarCobroManual(
+            @PathVariable Long turnoId,
+            @Valid @RequestBody CobroManualRequest request) {
+        PagoResponse response = turnoService.registrarCobroManual(turnoId, request);
         return ResponseEntity.ok(response);
     }
 
