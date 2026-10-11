@@ -21,6 +21,20 @@ public class Pago {
 
     private LocalDateTime fechaCreacion;
 
-    // Se completa mas adelante cuando se integre MercadoPago como checkout.
+    // Id del pago en Mercado Pago. Se completa cuando MP nos avisa por webhook.
     private String mercadoPagoId;
+
+    // Momento en que se cobro (en pagos manuales, la hora real que informa el mozo).
+    private LocalDateTime fechaPago;
+
+    // Como se pago: por Mercado Pago (QR), efectivo o tarjeta con terminal.
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodo;
+
+    // Id de la preferencia (link de pago) creada en Mercado Pago.
+    private String preferenciaId;
+
+    // URL a la que se redirige al cliente para pagar en Mercado Pago.
+    @Column(length = 500)
+    private String initPoint;
 }

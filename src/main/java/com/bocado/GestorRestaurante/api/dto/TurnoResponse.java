@@ -4,6 +4,7 @@ import com.bocado.GestorRestaurante.api.model.EstadoTurno;
 import com.bocado.GestorRestaurante.api.model.Turno;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -19,6 +20,7 @@ public class TurnoResponse {
     private Long clienteId;
     private String clienteNombre;
     private List<PlatoResponse> platos;
+    private BigDecimal total;
     private PagoResponse pago;
 
     public TurnoResponse(Turno turno) {
@@ -38,6 +40,8 @@ public class TurnoResponse {
                     .map(PlatoResponse::new)
                     .collect(Collectors.toList());
         }
+
+        this.total = turno.calcularTotal();
 
         if (turno.getPago() != null) {
             this.pago = new PagoResponse(turno.getPago());
