@@ -151,6 +151,34 @@ Todas las peticiones y respuestas usan `Content-Type: application/json`.
 | `DELETE` | `/api/turnos/eliminarTurno/{id}` | Elimina un turno | `204 No Content` |
 | `POST` | `/api/turnos/{turnoId}/platos/{platoId}` | Agrega un plato pre-pedido al turno | `200 OK` |
 | `POST` | `/api/turnos/{turnoId}/pago` | Crea y asocia un pago al turno | `200 OK` |
+| `PUT` | `/api/turnos/{turnoId}/platos` | Fija el pedido completo de la mesa (reemplaza los platos; idempotente) | `200 OK` |
+| `POST` | `/api/turnos/{turnoId}/cerrar-pago` | Calcula el total y genera el checkout de Mercado Pago (link y QR) | `200 OK` |
+| `POST` | `/api/turnos/{turnoId}/pago-efectivo` | Cobro en efectivo: aprueba el pago y envía el comprobante | `200 OK` |
+| `POST` | `/api/turnos/{turnoId}/pago-manual` | Cobro en mesa (`EFECTIVO` o `TARJETA`); idempotente | `200 OK` |
+
+### Pagos — `/api/pagos`
+
+| Método | Endpoint | Descripción | Respuesta |
+|--------|----------|-------------|-----------|
+| `GET` | `/api/pagos/obtenerPago/{id}` | Obtiene un pago y su estado | `200 OK` |
+| `POST` | `/api/pagos/{id}/checkout` | Genera el checkout de Mercado Pago (`initPoint`) | `200 OK` |
+| `GET` | `/api/pagos/{id}/qr` | Imagen PNG del QR de pago | `200 OK` |
+| `POST` | `/api/pagos/webhook` | Aviso de Mercado Pago; la API vuelve a consultar el pago y lo actualiza | `200 OK` |
+| `POST` | `/api/pagos/{id}/reenviar-recibo` | Reenvía el comprobante por mail | `200 OK` |
+
+#### Variables de entorno (opcionales)
+
+Si no se definen, la API arranca igual; solo quedan deshabilitadas las funciones que las necesitan.
+
+| Variable | Para qué sirve |
+|----------|----------------|
+| `MP_ACCESS_TOKEN` | Access token de Mercado Pago (usar credenciales de prueba) |
+| `MP_NOTIFICATION_URL` | URL pública del webhook (por ejemplo, la de ngrok + `/api/pagos/webhook`) |
+| `MP_BACK_URL` | A dónde vuelve el cliente después de pagar (por defecto `http://localhost:5173`) |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD`, `MAIL_FROM_NAME` | Cuenta SMTP para enviar el comprobante |
+| `CORS_ALLOWED_ORIGINS` | Orígenes web permitidos, separados por coma |
+
+Códigos de error nuevos: `400` para operaciones inválidas (por ejemplo, pedido con plato repetido o cantidad 0), `409` si el turno ya fue pagado y `502` si falla la comunicación con Mercado Pago.
 
 ---
 
