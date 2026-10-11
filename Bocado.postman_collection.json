@@ -1,0 +1,1147 @@
+{
+  "info": {
+    "name": "Bocado - GestorRestaurante API",
+    "description": "Colección generada a partir de Bocado-Endpoints-API.pdf. Orden recomendado: Clientes -> Platos -> Turnos (crear turno, agregar plato, asociar pago, cambiar estado) -> Eliminar turno al final. Cada POST de creación guarda el id devuelto en una variable de colección para encadenar los siguientes requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "clienteId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "platoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "turnoId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "pagoId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "Crear cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"clienteId\", jsonData.id);",
+                  "    pm.test(\"Cliente creado (201) y clienteId guardado\", function () {",
+                  "        pm.response.to.have.status(201);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Juan\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juan.perez@mail.com\",\n  \"telefono\": \"1134567890\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/clientes/crearCliente",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "crearCliente"
+              ]
+            },
+            "description": "nombre, apellido y email obligatorios; email con formato válido; telefono opcional. 201 Created. 400 si falla alguna validación."
+          }
+        },
+        {
+          "name": "Listar clientes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/clientes/listarClientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "listarClientes"
+              ]
+            },
+            "description": "200 OK con un array (o [] si no hay clientes)."
+          }
+        },
+        {
+          "name": "Obtener cliente por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/clientes/obtenerCliente/{{clienteId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "obtenerCliente",
+                "{{clienteId}}"
+              ]
+            },
+            "description": "200 OK. 404 si no existe el id."
+          }
+        },
+        {
+          "name": "Crear cliente - ejemplo error 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"apellido\": \"Pérez\",\n  \"email\": \"juanmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/clientes/crearCliente",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "clientes",
+                "crearCliente"
+              ]
+            },
+            "description": "Nombre vacío y email con formato inválido a propósito: debe devolver 400 con el detalle de errores por campo."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Platos",
+      "item": [
+        {
+          "name": "Crear plato",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/platos/crearPlato",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "crearPlato"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Hamburguesa clásica\",\n  \"descripcion\": \"Carne, queso y pan de papa\",\n  \"precio\": 8000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Listar platos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/platos/listarPlatos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "listarPlatos"
+              ]
+            },
+            "description": "200 OK con todos los platos de los tres tipos, cada uno con su tipo y atributos."
+          }
+        },
+        {
+          "name": "Obtener plato por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/platos/obtenerPlato/{{platoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "obtenerPlato",
+                "{{platoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar plato",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/platos/actualizarPlato/{{platoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "actualizarPlato",
+                "{{platoId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Hamburguesa clásica\",\n  \"descripcion\": \"Carne, queso cheddar y pan de papa\",\n  \"precio\": 8500\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Eliminar plato",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/platos/eliminarPlato/{{platoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "eliminarPlato",
+                "{{platoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear plato - ejemplo error 409 (nombre repetido: enviar dos veces)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/platos/crearPlato",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "crearPlato"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Hamburguesa clásica\",\n  \"descripcion\": \"Repetida\",\n  \"precio\": 8000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Crear plato - ejemplo error 400 (precio negativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/platos/crearPlato",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "crearPlato"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Plato invalido\",\n  \"descripcion\": \"Sin precio valido\",\n  \"precio\": -5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Turnos",
+      "item": [
+        {
+          "name": "Crear turno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"turnoId\", jsonData.id);",
+                  "    pm.test(\"Turno creado (201) y turnoId guardado\", function () {",
+                  "        pm.response.to.have.status(201);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-15\",\n  \"hora\": \"21:00\",\n  \"cantidadComensales\": 4,\n  \"clienteId\": {{clienteId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/turnos/crearTurno",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "crearTurno"
+              ]
+            },
+            "description": "Los 4 campos son obligatorios; cantidadComensales >= 1; el cliente debe existir. Fecha yyyy-MM-dd, hora HH:mm. Arranca en estado PENDIENTE. 201 Created. 400 validación, 404 cliente inexistente."
+          }
+        },
+        {
+          "name": "Listar turnos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/listarTurnos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "listarTurnos"
+              ]
+            },
+            "description": "200 OK con un array de turnos."
+          }
+        },
+        {
+          "name": "Obtener turno por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/obtenerTurno/{{turnoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "obtenerTurno",
+                "{{turnoId}}"
+              ]
+            },
+            "description": "200 OK. 404 si no existe."
+          }
+        },
+        {
+          "name": "Agregar plato al turno (pre-pedido)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos/{{platoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos",
+                "{{platoId}}"
+              ]
+            },
+            "description": "Sin body. Primer id = turno, segundo = plato. Relación muchos a muchos. 200 OK con el plato dentro de 'platos'. 404 si el turno o el plato no existen."
+          }
+        },
+        {
+          "name": "Asociar pago al turno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 34000.00\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/pago",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "pago"
+              ]
+            },
+            "description": "monto obligatorio y no negativo. Se crea en PENDIENTE con fecha automática. Relación uno a uno. 200 OK con el objeto pago."
+          }
+        },
+        {
+          "name": "Cambiar estado",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/cambiarEstado/{{turnoId}}?estado=CONFIRMADO",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "cambiarEstado",
+                "{{turnoId}}"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "CONFIRMADO",
+                  "description": "Valores válidos: PENDIENTE, CONFIRMADO, CANCELADO"
+                }
+              ]
+            },
+            "description": "Sin body. El estado va como query param (@RequestParam). 200 OK. 400 si falta o es inválido, 404 si el turno no existe."
+          }
+        },
+        {
+          "name": "Actualizar turno",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fecha\": \"2026-10-20\",\n  \"hora\": \"20:30\",\n  \"cantidadComensales\": 6,\n  \"clienteId\": {{clienteId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/turnos/actualizarTurno/{{turnoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "actualizarTurno",
+                "{{turnoId}}"
+              ]
+            },
+            "description": "Mismo body que crear; hay que mandar todos los campos. No modifica estado, platos ni pago. 200 OK. 400, 404 (turno o cliente inexistente)."
+          }
+        },
+        {
+          "name": "Eliminar turno",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/eliminarTurno/{{turnoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "eliminarTurno",
+                "{{turnoId}}"
+              ]
+            },
+            "description": "Último paso: después de esto el turno ya no existe. 204 No Content. 404 si no existía."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pagos - Mercado Pago",
+      "item": [
+        {
+          "name": "1) Cerrar pago del turno (total de platos + checkout)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/cerrar-pago",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "cerrar-pago"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.pagoId) { pm.collectionVariables.set('pagoId', j.pagoId); }",
+                  "console.log('Total: ' + j.monto + ' | Link de pago: ' + j.initPoint);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) Ver QR del pago (PNG)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pagos/{{pagoId}}/qr",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pagos",
+                "{{pagoId}}",
+                "qr"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Asociar pago al turno (guarda pagoId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/pago",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "pago"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"monto\": 15000.0\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.pago && j.pago.id) { pm.collectionVariables.set('pagoId', j.pago.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Generar checkout de Mercado Pago (devuelve initPoint)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pagos/{{pagoId}}/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pagos",
+                "{{pagoId}}",
+                "checkout"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const j = pm.response.json();",
+                  "if (j.initPoint) { console.log('Abrir para pagar: ' + j.initPoint); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Obtener pago (ver estado)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pagos/obtenerPago/{{pagoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pagos",
+                "obtenerPago",
+                "{{pagoId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Webhook simulado (como lo llama MP)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/pagos/webhook?data.id=123456&type=payment",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pagos",
+                "webhook?data.id=123456&type=payment"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"payment.updated\",\n  \"type\": \"payment\",\n  \"data\": {\n    \"id\": \"123456\"\n  }\n}"
+            }
+          }
+        },
+        {
+          "name": "Pagar en efectivo (mozo, aprueba al instante)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/pago-efectivo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "pago-efectivo"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cobro manual - EFECTIVO con fecha real (idempotente: repetir devuelve 200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metodo\": \"EFECTIVO\",\n  \"cobradoEn\": \"2026-10-05T21:15:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/pago-manual",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "pago-manual"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cobro manual - TARJETA (si ya estaba en EFECTIVO devuelve 409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"metodo\": \"TARJETA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/pago-manual",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "pago-manual"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reenviar comprobante por mail",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pagos/{{pagoId}}/reenviar-recibo",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "pagos",
+                "{{pagoId}}",
+                "reenviar-recibo"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pedido de la mesa (mozo)",
+      "item": [
+        {
+          "name": "1) Listar platos disponibles (menu)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/platos/listarPlatos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "platos",
+                "listarPlatos"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2) Fijar pedido completo (2 x plato 1, 1 x plato 2)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 2\n    },\n    {\n      \"platoId\": 2,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "3) Repetir el mismo pedido (idempotente: mismo resultado, sin duplicar)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 2\n    },\n    {\n      \"platoId\": 2,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "4) Quitar un plato (queda solo 1 x plato 1)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "5) Vaciar el pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 404: plato inexistente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 9999,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: plato repetido en el pedido",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 1\n    },\n    {\n      \"platoId\": 1,\n      \"cantidad\": 2\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: cantidad 0",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 409: turno ya pagado (cobrar primero y despues repetir el 2)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/turnos/{{turnoId}}/platos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "turnos",
+                "{{turnoId}}",
+                "platos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"platoId\": 1,\n      \"cantidad\": 1\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -5,3 +5,7 @@
 .idea/
 *.iml
 .DS_Store
+
+# Binarios locales y secretos
+ngrok.exe
+.env
