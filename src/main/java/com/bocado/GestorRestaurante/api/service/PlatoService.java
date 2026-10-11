@@ -19,6 +19,8 @@ public class PlatoService {
 
     public  PlatoResponse crearPlato(PlatoRequest request) {
 
+        validarNombreDisponible(request.getNombre());
+
         Plato plato = new Plato();
         plato.setNombre(request.getNombre());
         plato.setDescripcion(request.getDescripcion());
@@ -38,6 +40,10 @@ public class PlatoService {
     public PlatoResponse actualizarPlato(Long id, PlatoRequest request) {
         Plato plato = platoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontradoException("plato no encontrado con id: " + id));
+
+        if (platoRepository.existsByNombreIgnoreCaseAndIdNot(request.getNombre(), id)) {
+            throw new RecursoDuplicadoException("Ya existe un plato con el nombre: " + request.getNombre());
+        }
 
         plato.setPrecio(request.getPrecio());
         plato.setDescripcion(request.getDescripcion());

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 /* ───────── Config ───────── */
-// Cambiá esta URL por la de tu backend (en Vite podés usar import.meta.env.VITE_API_URL)
-const API = "http://localhost:8080";
+// URL del backend: en Vercel se define con la variable VITE_API_URL; en local usa localhost.
+const API = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
 const EP = {
   listarTurnos: "/api/turnos/listarTurnos",
   crearTurno: "/api/turnos/crearTurno",
