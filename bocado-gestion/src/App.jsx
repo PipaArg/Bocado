@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import Reportes from "./Reportes.jsx";
+
 
 /* ───────── Datos demo ─────────
  * Todo vive en el estado de React (se pierde al recargar).
@@ -9,6 +11,7 @@ import { useEffect, useState } from "react";
 const MOZOS = [
   { usuario: "carla", clave: "1234", nombre: "Carla", turno: "Noche" },
   { usuario: "nico", clave: "1234", nombre: "Nico", turno: "Noche" },
+  { usuario: "admin", clave: "1234", nombre: "Encargado", turno: "-", rol: "ENCARGADO" },
 ];
 
 const MENU = {
@@ -198,6 +201,11 @@ export default function App() {
   };
   const titulo = vista === "mesas" ? `Hola, ${mozo?.nombre}` : vista === "mesa" ? `Mesa ${mesa?.num}` : vista === "menu" ? "Agregar platos" : cat;
 
+// El encargado no usa la pantalla de mozos: ve directamente el reporte
+  if (mozo?.rol === "ENCARGADO") {
+    return <Reportes onSalir={salir} />;
+  }
+
   /* ── Vistas ── */
   const loginView = () => (
       <form className="login" onSubmit={login}>
@@ -210,7 +218,7 @@ export default function App() {
         {err && <p className="err" role="alert">{err}</p>}
         <button className="primary">Ingresar</button>
         <button type="button" className="sec" onClick={() => entrar(MOZOS[0])}>Entrar como Carla (demo)</button>
-        <p className="hint">Demo: carla / 1234</p>
+        <p className="hint">Demo: carla / 1234 · Encargado: admin / 1234</p>
       </form>
   );
 
