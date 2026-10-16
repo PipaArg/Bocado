@@ -26,5 +26,3 @@ public interface TurnoRepository extends JpaRepository<Turno, Long> {
     @Query("select t from Turno t where t.id = :id")
     Optional<Turno> buscarParaActualizar(@Param("id") Long id);
 }
-// Todos los turnos de un dia (para el reporte del encargado)
-java.util.List<Turno> findByFecha(java.time.LocalDate fecha); }
