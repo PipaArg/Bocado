@@ -56,6 +56,7 @@ export default function App() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [nota, setNota] = useState("");
 
   const [sending, setSending] = useState(false);
@@ -68,7 +69,8 @@ export default function App() {
   };
   useEffect(() => { cargar(); }, []);
 
-  const datosOk = nombre.trim().length > 1 && apellido.trim().length > 1 && emailOk(email);
+  const telOk = !telefono.trim() || telefono.replace(/\D/g, "").length >= 8;
+  const datosOk = nombre.trim().length > 1 && apellido.trim().length > 1 && emailOk(email) && telOk;
 
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 0));
@@ -81,14 +83,14 @@ export default function App() {
 
   const reset = () => {
     setStep(0); setFecha(HOY); setHora(""); setComensales(2);
-    setNombre(""); setApellido(""); setEmail(""); setNota(""); setCreado(null); setError("");
+    setNombre(""); setApellido(""); setEmail(""); setTelefono(""); setNota(""); setCreado(null); setError("");
   };
 
   const enviar = async () => {
     setSending(true); setError("");
     try {
       // 1) Se da de alta el cliente siempre (sin chequear si ya existe)
-      const datosCliente = { nombre: nombre.trim(), apellido: apellido.trim(), email: email.trim() };
+      const datosCliente = { nombre: nombre.trim(), apellido: apellido.trim(), email: email.trim(), telefono: telefono.trim() || null };
       const cli = demo
           ? { id: Math.floor(Math.random() * 900 + 100), ...datosCliente }
           : await api(EP.crearCliente, { method: "POST", body: JSON.stringify(datosCliente) });
@@ -155,8 +157,10 @@ export default function App() {
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" autoComplete="given-name" aria-label="Nombre" />
         <input value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Apellido" autoComplete="family-name" aria-label="Apellido" />
         <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" type="email" autoComplete="email" aria-label="Email" />
+        <input value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="Teléfono (opcional)" type="tel" inputMode="tel" autoComplete="tel" aria-label="Teléfono" />
       </div>
       {email && !emailOk(email) && <p className="hint">Revisá el email, parece incompleto.</p>}
+      {!telOk && <p className="hint">Revisá el teléfono, parece incompleto.</p>}
       <button className="primary" disabled={!datosOk}>Continuar</button>
     </form>,
 
@@ -184,6 +188,7 @@ export default function App() {
         <div><dt>Mesa para</dt><dd>{comensales}</dd></div>
         <div><dt>Nombre</dt><dd>{nombre.trim()} {apellido.trim()}</dd></div>
         <div><dt>Email</dt><dd className="raw">{email.trim()}</dd></div>
+        {telefono.trim() && <div><dt>Teléfono</dt><dd className="raw">{telefono.trim()}</dd></div>}
         {nota.trim() && <div><dt>Nota</dt><dd className="raw">{nota.trim()}</dd></div>}
       </dl>
       {error && <p className="err" role="alert">{error}</p>}
