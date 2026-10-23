@@ -1,28 +1,7 @@
 import { useEffect, useState } from "react";
 import Reportes from "./Reportes.jsx";
+import { api, EP } from "./api.js";
 
-
-/* ───────── Datos demo ─────────
- * Todo vive en el estado de React (se pierde al recargar).
- * Cuando armes el backend, reemplazá las acciones (login, sentar, agregar, pagar…) por llamadas a tu API:
- *   POST /api/mozos/login            GET /api/mesas/mozo/{id}      GET /api/reservas/turno
- *   POST /api/mesas/{id}/platos/{platoId}      PUT /api/mesas/{id}/estado?estado=A_PAGAR
- */
-const MOZOS = [
-  { usuario: "carla", clave: "1234", nombre: "Carla", turno: "Noche" },
-  { usuario: "nico", clave: "1234", nombre: "Nico", turno: "Noche" },
-  { usuario: "admin", clave: "1234", nombre: "Encargado", turno: "-", rol: "ENCARGADO" },
-];
-
-const MENU = {
-  entradas: { icon: "🥗", items: ["Provoleta con tomates", "Empanadas de carne (x3)", "Rabas", "Tabla de fiambres", "Bruschettas"] },
-  pizzas: { icon: "🍕", items: ["Muzzarella", "Napolitana", "Fugazzeta", "Calabresa", "Cuatro quesos"] },
-  pastas: { icon: "🍝", items: ["Ñoquis de papa", "Sorrentinos de jamón y queso", "Ravioles de verdura", "Tallarines a la bolognesa", "Lasagna"] },
-  milanesas: { icon: "🥩", items: ["Milanesa napolitana", "Milanesa a caballo", "Suprema de pollo", "Milanesa con puré", "Milanesa de berenjena"] },
-  hamburguesas: { icon: "🍔", items: ["Clásica", "Doble cheddar", "Bacon BBQ", "Crispy chicken", "Veggie"] },
-  bebidas: { icon: "🥤", items: ["Agua sin gas", "Gaseosa 500 ml", "Cerveza artesanal", "Copa de vino", "Limonada"] },
-  postres: { icon: "🍮", items: ["Flan con dulce de leche", "Brownie con helado", "Tiramisú", "Panqueque de dulce de leche", "Helado 2 bochas"] },
-};
 
 const ESTADO = {
   LIBRE: { label: "Libre", cls: "libre" },
@@ -31,40 +10,7 @@ const ESTADO = {
   A_PAGAR: { label: "A pagar", cls: "apagar" },
 };
 const EVENTOS = ["Cumpleaños", "Aniversario", "Cena de trabajo", "Sin evento"];
-// Platos que el encargado desactivó (más adelante vendrá de la API / app del manager)
-const AGOTADOS = ["pizzas-3", "bebidas-2", "postres-2"];
 const NOTAS = ["Sin cebolla", "Sin sal", "Bien cocido", "Punto jugoso", "Sin TACC", "Sin picante"];
-
-const T0 = Date.now();
-let _id = 0;
-const nid = () => ++_id;
-const plato = (cat, i, cant = 1, nota = "") => ({ id: `${cat}-${i}`, nombre: MENU[cat].items[i], cant, nota });
-const ev = (min, tipo, items = []) => ({ id: nid(), ts: T0 - min * 60000, tipo, items });
-// hist = acciones de la mesa en orden; cada "pedido" agrupa todos los platos de esa acción
-const mk = (num, cap, mozo, estado = "LIBRE", quien = "", evento = "", hist = []) => ({
-  id: num, num, cap, mozo, estado, quien, evento, hist,
-  desde: hist.find((h) => h.tipo === "ocupada")?.ts ?? null,
-});
-const MESAS0 = [
-  mk(1, 2, "carla"),
-  mk(2, 4, "carla", "OCUPADA", "Ana Ruiz", "Cumpleaños", [ev(35, "ocupada"), ev(33, "pedido", [plato("pizzas", 1, 1, "Sin aceitunas"), plato("bebidas", 2, 2)]), ev(18, "pedido", [plato("postres", 1)])]),
-  mk(3, 4, "carla"),
-  mk(4, 6, "carla", "A_PAGAR", "Familia Costa", "Almuerzo familiar", [ev(80, "ocupada"), ev(78, "pedido", [plato("milanesas", 0, 2), plato("bebidas", 1, 3)]), ev(45, "pedido", [plato("postres", 1)]), ev(6, "pagar")]),
-  mk(5, 2, "carla", "OCUPADA", "Sin reserva", "", [ev(10, "ocupada"), ev(8, "pedido", [plato("entradas", 1)])]),
-  mk(6, 8, "carla"),
-  mk(7, 4, "nico"),
-  mk(8, 2, "nico", "OCUPADA", "Sin reserva", "", [ev(20, "ocupada"), ev(17, "pedido", [plato("hamburguesas", 1, 1, "Bien cocida")])]),
-  mk(9, 4, "nico"),
-  mk(10, 6, "nico"),
-];
-const RESERVAS0 = [
-  { id: 1, mesaId: 2, hora: "20:15", nombre: "Ana Ruiz", personas: 4, evento: "Cumpleaños", nota: "", estado: "SENTADA" },
-  { id: 2, mesaId: 1, hora: "21:00", nombre: "Lucía Ferrari", personas: 2, evento: "Aniversario", nota: "Mesa tranquila, lejos de la puerta", estado: "PENDIENTE" },
-  { id: 3, mesaId: 3, hora: "21:30", nombre: "Martín Acosta", personas: 4, evento: "Cumpleaños", nota: "Traen torta propia", estado: "PENDIENTE" },
-  { id: 4, mesaId: 6, hora: "22:00", nombre: "Sofía Benítez", personas: 8, evento: "Cena de trabajo", nota: "Una celíaca", estado: "PENDIENTE" },
-  { id: 5, mesaId: 7, hora: "20:45", nombre: "Pedro Gómez", personas: 3, evento: "", nota: "", estado: "PENDIENTE" },
-  { id: 6, mesaId: 9, hora: "22:15", nombre: "Julia Díaz", personas: 4, evento: "", nota: "Silla para bebé", estado: "PENDIENTE" },
-];
 
 // Acepta un timestamp (ms) o un "HH:MM"; devuelve siempre formato 24 h (21:00)
 const fmtHora = (v) => {
@@ -85,9 +31,15 @@ const plat = (n) => `${n} ${n === 1 ? "plato" : "platos"}`;
 /* ───────── App ───────── */
 export default function App() {
   const [mozo, setMozo] = useState(null);
-  const [mesas, setMesas] = useState(MESAS0);
-  const [reservas, setReservas] = useState(RESERVAS0);
+  // TODO: cargar mesas desde GET /api/mesas/mozo/{id} cuando exista ese endpoint.
+  const [mesas, setMesas] = useState([]);
+  // TODO: cargar reservas desde GET /api/reservas/turno cuando exista ese endpoint.
+  const [reservas, setReservas] = useState([]);
+  const [turnosCargando, setTurnosCargando] = useState(false);
+  const [turnosError, setTurnosError] = useState("");
+  const [recargarTurnos, setRecargarTurnos] = useState(0);
   const [vista, setVista] = useState("login"); // login | mesas | mesa | menu | items
+  const [mostrarReporte, setMostrarReporte] = useState(false);
   const [tab, setTab] = useState("mesas"); // mesas | reservas
   const [mesaId, setMesaId] = useState(null);
   const [cat, setCat] = useState(null);
@@ -99,13 +51,13 @@ export default function App() {
   const [dev, setDev] = useState("");
   const [dh, setDh] = useState("");
   const [carrito, setCarrito] = useState([]); // platos de la acción en curso (sin confirmar)
+  const [menu, setMenu] = useState([]);
+  const [menuCargando, setMenuCargando] = useState(true);
+  const [menuError, setMenuError] = useState("");
+  const [recargarMenu, setRecargarMenu] = useState(0);
   const [offline, setOffline] = useState(typeof navigator !== "undefined" && navigator.onLine === false);
-  const [simOff, setSimOff] = useState(false); // modo prueba: simula que se cae la conexión
-  const [cola, setCola] = useState([]); // acciones hechas sin conexión, pendientes de enviar
-  const [sync, setSync] = useState(""); // "" | "sync" | "ok"
   const [notaId, setNotaId] = useState(null);
   const [dn, setDn] = useState("");
-  const sinRed = offline || simOff;
   const hora = fmtHora;
 
   useEffect(() => {
@@ -113,45 +65,66 @@ export default function App() {
     window.addEventListener("online", on); window.addEventListener("offline", off);
     return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
   }, []);
-  // Al volver la conexión se envía la cola (acá iría el flush real contra la API)
   useEffect(() => {
-    if (sinRed || cola.length === 0) return;
-    setSync("sync");
-    const t = setTimeout(() => { setCola([]); setSync("ok"); }, 900);
-    return () => clearTimeout(t);
-  }, [sinRed, cola.length]);
+    let cancelado = false;
+    const cargarMenu = async () => {
+      try {
+        const [categorias, platos] = await Promise.all([
+          api(EP.listarCategorias),
+          api(EP.listarPlatos),
+        ]);
+        if (!Array.isArray(categorias) || !Array.isArray(platos)) {
+          throw new Error("La API devolvió un menú inválido");
+        }
+        if (!cancelado) {
+          setMenu(categorias.map((categoria) => ({
+            ...categoria,
+            items: platos.filter((p) => p.categoriaId === categoria.id),
+          })));
+        }
+      } catch (error) {
+        if (!cancelado) setMenuError(error.message);
+      } finally {
+        if (!cancelado) setMenuCargando(false);
+      }
+    };
+    cargarMenu();
+    return () => { cancelado = true; };
+  }, [recargarMenu]);
   useEffect(() => {
-    if (sync !== "ok") return;
-    const t = setTimeout(() => setSync(""), 2500);
-    return () => clearTimeout(t);
-  }, [sync]);
-
+    let cancelado = false;
+    const cargarTurnos = async () => {
+      setTurnosCargando(true);
+      setTurnosError("");
+      try {
+        const turnos = await api(EP.listarTurnos);
+        if (!Array.isArray(turnos)) throw new Error("La API devolvió una lista de turnos inválida");
+        if (!cancelado) setReservas(turnos);
+      } catch (error) {
+        if (!cancelado) setTurnosError(error.message);
+      } finally {
+        if (!cancelado) setTurnosCargando(false);
+      }
+    };
+    cargarTurnos();
+    return () => { cancelado = true; };
+  }, [recargarTurnos]);
   const mias = mesas.filter((m) => m.mozo === mozo?.usuario);
   const mesa = mesas.find((m) => m.id === mesaId);
   const resDe = (m) => reservas.find((r) => r.mesaId === m.id && r.estado === "PENDIENTE");
   const est = (m) => (m.estado === "LIBRE" && resDe(m) ? "RESERVADA" : m.estado);
-  const misReservas = reservas.filter((r) => mias.some((m) => m.id === r.mesaId)).sort((a, b) => a.hora.localeCompare(b.hora));
+  const misReservas = reservas.slice().sort((a, b) => `${a.fecha} ${a.hora}`.localeCompare(`${b.fecha} ${b.hora}`));
   const pendientes = misReservas.filter((r) => r.estado === "PENDIENTE").length;
   const upd = (id, fn) => setMesas((ms) => ms.map((m) => (m.id === id ? fn(m) : m)));
-  // Toda acción pasa por acá: con conexión se envía a la API (TODO); sin conexión queda en la cola y se envía al volver
-  const registrar = (desc) => { if (sinRed) setCola((c) => [...c, { id: nid(), desc, ts: Date.now() }]); };
   const abrirNota = (id) => { setNotaId(id); setDn(carrito.find((p) => p.id === id)?.nota ?? ""); setSheet("nota"); };
   const guardarNota = () => { setCarrito((c) => c.map((p) => (p.id === notaId ? { ...p, nota: dn.trim() } : p))); setSheet(null); };
 
-  /* Acciones (acá iría la llamada a la API) */
-  const entrar = (m) => { setMozo(m); setErr(""); setClave(""); setVista("mesas"); };
   const login = (e) => {
     e.preventDefault();
-    // Se lee del formulario (no solo del estado) para que funcione con el autocompletado del celu
-    const f = new FormData(e.currentTarget);
-    const u = String(f.get("usuario") ?? usuario).trim().toLowerCase();
-    const c = String(f.get("clave") ?? clave);
-    if (!u || !c) return setErr("Escribí tu usuario y contraseña");
-    const m = MOZOS.find((x) => x.usuario === u && x.clave === c);
-    if (!m) return setErr("Usuario o contraseña incorrectos. Probá con carla / 1234");
-    entrar(m);
+    // TODO: poner acá la llamada a POST /api/mozos/login cuando exista ese endpoint.
+    setErr("Falta conectar la API de acceso de mozos.");
   };
-  const salir = () => { setSheet(null); setMozo(null); setUsuario(""); setTab("mesas"); setVista("login"); };
+  const salir = () => { setSheet(null); setMozo(null); setUsuario(""); setTab("mesas"); setVista("login"); setMostrarReporte(false); };
   const abrirDatos = (modo) => {
     const d = mesa.desde ? new Date(mesa.desde) : new Date();
     setDq(mesa.quien === "Sin reserva" ? "" : mesa.quien);
@@ -160,6 +133,7 @@ export default function App() {
     setSheet(modo);
   };
   const guardarDatos = () => {
+    // TODO: poner acá la llamada a la API para abrir o actualizar una mesa.
     const d = new Date();
     const [h, mi] = (dh || "00:00").split(":").map(Number);
     d.setHours(h, mi, 0, 0);
@@ -169,40 +143,59 @@ export default function App() {
       estado: m.estado === "LIBRE" ? "OCUPADA" : m.estado,
       hist: m.estado === "LIBRE" ? [{ id: nid(), ts, tipo: "ocupada", items: [] }] : m.hist.map((x) => (x.tipo === "ocupada" ? { ...x, ts } : x)),
     }));
-    registrar(mesa.estado === "LIBRE" ? `Mesa ${mesa.num} abierta` : `Datos de la mesa ${mesa.num} editados`);
     setSheet(null);
   };
   const sentar = () => {
+    // TODO: poner acá la llamada a la API para asignar una reserva a una mesa.
     const r = resDe(mesa);
     const ts = Date.now();
     upd(mesaId, (m) => ({ ...m, estado: "OCUPADA", desde: ts, quien: r.nombre, evento: r.evento, hist: [{ id: nid(), ts, tipo: "ocupada", items: [] }] }));
     setReservas((rs) => rs.map((x) => (x.id === r.id ? { ...x, estado: "SENTADA" } : x)));
-    registrar(`Reserva de ${r.nombre} sentada en mesa ${mesa.num}`);
   };
   const marca = (tipo, estado) => upd(mesaId, (m) => ({ ...m, estado, hist: [...m.hist, { id: nid(), ts: Date.now(), tipo, items: [] }] }));
-  const pagar = () => { marca("pagar", "A_PAGAR"); registrar(`Mesa ${mesa.num} pasó a pagar`); };
-  const reabrir = () => { marca("reabrir", "OCUPADA"); registrar(`Mesa ${mesa.num} volvió a ocupada`); };
-  const liberar = () => { upd(mesaId, (m) => ({ ...m, estado: "LIBRE", hist: [], desde: null, quien: "", evento: "" })); registrar(`Mesa ${mesa.num} liberada`); setVista("mesas"); };
+  const pagar = () => {
+    // TODO: poner acá la llamada a la API para marcar la mesa como pendiente de pago.
+    marca("pagar", "A_PAGAR");
+  };
+  const reabrir = () => {
+    // TODO: poner acá la llamada a la API para reabrir la mesa.
+    marca("reabrir", "OCUPADA");
+  };
+  const liberar = () => {
+    // TODO: poner acá la llamada a la API para liberar la mesa al cobrar.
+    upd(mesaId, (m) => ({ ...m, estado: "LIBRE", hist: [], desde: null, quien: "", evento: "" }));
+    setVista("mesas");
+  };
 
   /* Pedido: cada confirmación es UNA acción en el historial que agrupa todos los platos elegidos */
-  const sumar = (id, nombre) => AGOTADOS.includes(id) ? null : setCarrito((c) => (c.some((p) => p.id === id) ? c.map((p) => (p.id === id ? { ...p, cant: p.cant + 1 } : p)) : [...c, { id, nombre, cant: 1 }]));
+  const sumar = (plato) => {
+    if (!plato.activo) return;
+    const id = String(plato.id);
+    setCarrito((c) => (c.some((p) => p.id === id)
+      ? c.map((p) => (p.id === id ? { ...p, cant: p.cant + 1 } : p))
+      : [...c, { id, nombre: plato.nombre, categoriaId: plato.categoriaId, cant: 1 }]));
+  };
   const restar = (id) => setCarrito((c) => c.map((p) => (p.id === id ? { ...p, cant: p.cant - 1 } : p)).filter((p) => p.cant > 0));
   const confirmar = () => {
+    if (!mesaId) {
+      setErr("TODO: conectar la API de pedidos de mesa.");
+      return;
+    }
+    // TODO: poner acá la llamada a la API para guardar el pedido de la mesa.
     upd(mesaId, (m) => ({ ...m, hist: [...m.hist, { id: nid(), ts: Date.now(), tipo: "pedido", items: carrito }] }));
-    registrar(`Pedido de ${plat(suma(carrito))} en mesa ${mesa.num}`);
     setCarrito([]); setVista("mesa");
   };
-  const cancelarPedido = () => { setCarrito([]); setVista("mesa"); };
+  const cancelarPedido = () => { setCarrito([]); setVista(mesaId ? "mesa" : "menu"); };
 
   const irMesa = (id) => { setMesaId(id); setVista("mesa"); };
   const volver = () => {
     if (vista === "menu") setCarrito([]);
-    setVista((v) => (v === "items" ? "menu" : v === "menu" ? "mesa" : "mesas"));
+    setVista((v) => (v === "items" ? "menu" : v === "menu" ? (mesaId ? "mesa" : "login") : v === "mesas" && !mozo ? "login" : "mesas"));
   };
-  const titulo = vista === "mesas" ? `Hola, ${mozo?.nombre}` : vista === "mesa" ? `Mesa ${mesa?.num}` : vista === "menu" ? "Agregar platos" : cat;
+  const categoriaActual = menu.find((categoria) => String(categoria.id) === String(cat));
+  const titulo = vista === "mesas" ? (mozo ? `Hola, ${mozo.nombre}` : "Turnos") : vista === "mesa" ? `Mesa ${mesa?.num}` : vista === "menu" ? "Agregar platos" : categoriaActual?.nombre ?? "Platos";
 
-// El encargado no usa la pantalla de mozos: ve directamente el reporte
-  if (mozo?.rol === "ENCARGADO") {
+  if (mostrarReporte) {
     return <Reportes onSalir={salir} />;
   }
 
@@ -215,10 +208,12 @@ export default function App() {
           <input name="usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Usuario" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" aria-label="Usuario" />
           <input name="clave" value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Contraseña" type="password" autoComplete="current-password" aria-label="Contraseña" />
         </div>
+        <p className="hint">TODO: conectar POST /api/mozos/login. El backend todavía no ofrece este endpoint.</p>
         {err && <p className="err" role="alert">{err}</p>}
         <button className="primary">Ingresar</button>
-        <button type="button" className="sec" onClick={() => entrar(MOZOS[0])}>Entrar como Carla (demo)</button>
-        <p className="hint">Demo: carla / 1234 · Encargado: admin / 1234</p>
+        <button type="button" className="sec" onClick={() => { setTab("reservas"); setVista("mesas"); }}>Ver turnos</button>
+        <button type="button" className="sec" onClick={() => setVista("menu")}>Ver menú</button>
+        <button type="button" className="sec" onClick={() => setMostrarReporte(true)}>Ver reporte del día</button>
       </form>
   );
 
@@ -242,7 +237,7 @@ export default function App() {
                 ))}
               </div>
               <h2>Tus mesas</h2>
-              {mias.length === 0 && <p className="sub">No tenés mesas asignadas.</p>}
+              {mias.length === 0 && <p className="sub">TODO: cargar las mesas desde la API de mesas asignadas al mozo.</p>}
               <div className="grid tres">
                 {mias.map((m) => {
                   const e = est(m);
@@ -258,19 +253,30 @@ export default function App() {
             </>
         ) : (
             <>
-              <p className="sub">Esperadas en tu turno · {pendientes} {pendientes === 1 ? "pendiente" : "pendientes"}</p>
+              {turnosCargando && <p className="sub">Cargando turnos…</p>}
+              {turnosError && (
+                  <div className="err" role="alert">
+                    <p>No se pudieron cargar los turnos: {turnosError}</p>
+                    <button className="sec" onClick={() => {
+                      setTurnosCargando(true);
+                      setTurnosError("");
+                      setRecargarTurnos((n) => n + 1);
+                    }}>Reintentar</button>
+                  </div>
+              )}
+              {!turnosCargando && !turnosError && misReservas.length === 0 && <p className="sub">Todavía no hay turnos cargados.</p>}
+              {/* TODO: poner acá la asignación del turno a una mesa cuando exista la API de mesas. */}
               {misReservas.map((r) => {
-                const sentada = r.estado === "SENTADA";
+                const confirmado = r.estado === "CONFIRMADO";
                 return (
-                    <button key={r.id} className={"res" + (sentada ? " done" : "")} onClick={() => irMesa(r.mesaId)}>
+                    <div key={r.id} className={"res" + (confirmado ? " done" : "")}>
                       <b>{hora(r.hora)}</b>
                       <span className="grow">
-                  {r.nombre}
-                        <small>Mesa {mesas.find((m) => m.id === r.mesaId).num} · {r.personas} personas{r.evento ? ` · ${r.evento}` : ""}</small>
-                        {r.nota && <small className="nota">“{r.nota}”</small>}
-                </span>
-                      <span className={"chip " + (sentada ? "gris" : "reservada")}>{sentada ? "Sentada" : "Esperada"}</span>
-                    </button>
+                        {r.clienteNombre || "Cliente sin nombre"}
+                        <small>{r.fecha} · {r.cantidadComensales} personas</small>
+                      </span>
+                      <span className={"chip " + (confirmado ? "gris" : "reservada")}>{r.estado}</span>
+                    </div>
                 );
               })}
             </>
@@ -369,45 +375,69 @@ export default function App() {
         <>
           <div className="body">
             <p className="sub">Elegí los platos y confirmá: se registran juntos como una sola acción.</p>
-            <div className="grid cats">
-              {Object.entries(MENU).map(([k, c]) => {
-                const q = suma(carrito.filter((p) => p.id.startsWith(k + "-")));
-                return (
-                    <button key={k} className="cat" onClick={() => { setCat(k); setVista("items"); }}>
-                      {q > 0 && <i className="cnt">{q}</i>}
-                      <span className="ico">{c.icon}</span>
-                      <b>{k}</b>
-                      <small>{c.items.filter((_, i) => !AGOTADOS.includes(`${k}-${i}`)).length} disponibles</small>
-                    </button>
-                );
-              })}
-            </div>
+            {menuCargando && <p className="sub">Cargando categorías y platos…</p>}
+            {menuError && (
+                <div className="err" role="alert">
+                  <p>No se pudo cargar el menú: {menuError}</p>
+                  <button className="sec" onClick={() => {
+                    setMenuCargando(true);
+                    setMenuError("");
+                    setRecargarMenu((n) => n + 1);
+                  }}>Reintentar</button>
+                </div>
+            )}
+            {!menuCargando && !menuError && menu.length === 0 && <p className="sub">Todavía no hay categorías cargadas.</p>}
+            {!menuCargando && !menuError && menu.length > 0 && (
+                <div className="grid cats">
+                  {menu.map((categoria) => {
+                    const q = suma(carrito.filter((p) => p.categoriaId === categoria.id));
+                    const disponibles = categoria.items.filter((item) => item.activo).length;
+                    return (
+                        <button key={categoria.id} className="cat" onClick={() => { setCat(categoria.id); setVista("items"); }}>
+                          {q > 0 && <i className="cnt">{q}</i>}
+                          <span className="ico">{categoria.emoji || "🍽️"}</span>
+                          <b>{categoria.nombre}</b>
+                          <small>{disponibles} disponibles</small>
+                        </button>
+                    );
+                  })}
+                </div>
+            )}
           </div>
-          {n > 0 && (
+          {n > 0 && mesaId && (
               <div className="foot">
                 <button className="primary" onClick={confirmar}>Confirmar · {plat(n)}</button>
                 <button className="sec" onClick={cancelarPedido}>Cancelar pedido</button>
               </div>
           )}
+          {n > 0 && !mesaId && <p className="hint">TODO: conectar la API para asociar el pedido a una mesa.</p>}
         </>
     );
   };
 
   const itemsView = () => {
     const n = suma(carrito);
+    if (!categoriaActual) {
+      return (
+          <div className="body">
+            <p className="sub">La categoría seleccionada ya no está disponible.</p>
+            <button className="primary" onClick={() => setVista("menu")}>Volver al menú</button>
+          </div>
+      );
+    }
     return (
         <>
           <div className="body">
-            {MENU[cat].items.map((nombre, i) => {
-              const id = `${cat}-${i}`;
+            {categoriaActual.items.map((plato) => {
+              const id = String(plato.id);
               const linea = carrito.find((p) => p.id === id);
               const c = linea?.cant ?? 0;
-              const ag = AGOTADOS.includes(id);
+              const desactivado = !plato.activo;
               return (
-                  <div key={id} className={"item" + (c ? " on" : "") + (ag ? " off" : "")}>
-                    <button className="add" disabled={ag} onClick={() => sumar(id, nombre)}>
-                      {nombre}
-                      {ag && <small>Agotado</small>}
+                  <div key={id} className={"item" + (c ? " on" : "") + (desactivado ? " off" : "")}>
+                    <button className="add" disabled={desactivado} onClick={() => sumar(plato)}>
+                      {plato.nombre}
+                      {desactivado && <small>No disponible</small>}
                       {linea?.nota && <small className="nota">“{linea.nota}”</small>}
                     </button>
                     {c > 0 && (
@@ -422,9 +452,10 @@ export default function App() {
             })}
           </div>
           <div className="foot">
-            {n > 0
+            {n > 0 && mesaId
                 ? <button className="primary" onClick={confirmar}>Confirmar · {plat(n)}</button>
-                : <button className="primary" onClick={() => setVista("mesa")}>Volver a la mesa</button>}
+                : <button className="primary" onClick={() => setVista(mesaId ? "mesa" : "menu")}>{mesaId ? "Volver a la mesa" : "Volver al menú"}</button>}
+            {n > 0 && !mesaId && <p className="hint">TODO: conectar la API para guardar pedidos de mesa.</p>}
             <button className="sec" onClick={volver}>Otra categoría</button>
           </div>
         </>
@@ -446,16 +477,12 @@ export default function App() {
           </header>
 
           <section className="card">
-            {vista !== "login" && (sinRed || sync) && (
-                <div className={"net " + (sinRed ? "off" : sync === "ok" ? "ok" : "sync")} role="status">
-                  {sinRed
-                      ? `Sin conexión · ${cola.length ? `${cola.length} ${cola.length === 1 ? "cambio pendiente" : "cambios pendientes"}` : "los cambios se guardan y se envían al volver"}`
-                      : sync === "ok" ? "Todo sincronizado ✓" : `Sincronizando ${cola.length} ${cola.length === 1 ? "cambio" : "cambios"}…`}
-                </div>
+            {vista !== "login" && offline && (
+                <div className="net off" role="status">Sin conexión con la API.</div>
             )}
             {vista !== "login" && (
                 <div className="bar">
-                  <button className="back" onClick={volver} aria-label="Volver" style={{ visibility: vista === "mesas" ? "hidden" : "visible" }}>‹</button>
+                  <button className="back" onClick={volver} aria-label="Volver" style={{ visibility: vista === "mesas" && mozo ? "hidden" : "visible" }}>‹</button>
                   <h1 className="title">{titulo}</h1>
                   {vista === "mesa" && <span className={"badge " + ESTADO[est(mesa)].cls}>{ESTADO[est(mesa)].label}</span>}
                 </div>
@@ -478,11 +505,6 @@ export default function App() {
                   <div className="stats">
                     <span className="chip gris">{mias.length} mesas</span>
                     <span className="chip reservada">{pendientes} reservas pendientes</span>
-                  </div>
-                  <p className="hint">Modo prueba de conexión</p>
-                  <div className="seg" role="radiogroup" aria-label="Conexión">
-                    <button role="radio" aria-checked={!simOff} className={!simOff ? "on" : ""} onClick={() => setSimOff(false)}>En línea</button>
-                    <button role="radio" aria-checked={simOff} className={simOff ? "on" : ""} onClick={() => setSimOff(true)}>Sin conexión</button>
                   </div>
                   <button className="primary" onClick={salir}>Cerrar sesión</button>
                   <button className="sec" onClick={() => setSheet(null)}>Cerrar</button>

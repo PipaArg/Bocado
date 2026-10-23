@@ -47,6 +47,16 @@ public class PlatoController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/desactivarPlato/{id}")
+    public ResponseEntity<PlatoResponse> desactivarPlato(@PathVariable Long id) {
+        return ResponseEntity.ok(platoService.cambiarActivo(id, false));
+    }
+
+    @PatchMapping("/activarPlato/{id}")
+    public ResponseEntity<PlatoResponse> activarPlato(@PathVariable Long id) {
+        return ResponseEntity.ok(platoService.cambiarActivo(id, true));
+    }
+
     @DeleteMapping("/eliminarPlato/{id}")
     public ResponseEntity<Void> eliminarPlato(@PathVariable Long id) {
         platoService.eliminarPlato(id);

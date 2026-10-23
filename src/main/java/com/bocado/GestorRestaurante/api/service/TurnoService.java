@@ -116,6 +116,7 @@ public class TurnoService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Turno no encontrado con id: " + turnoId));
         Plato plato = platoRepository.findById(platoId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Plato no encontrado con id: " + platoId));
+        validarPlatoActivo(plato);
 
         turno.getPlatos().add(plato);
         Turno turnoActualizado = turnoRepository.save(turno);
@@ -157,6 +158,14 @@ public class TurnoService {
         if (!faltantes.isEmpty()) {
             throw new RecursoNoEncontradoException("Platos no encontrados con id: " + faltantes);
         }
+        List<Long> inactivos = platos.values().stream()
+                .filter(plato -> !plato.isActivo())
+                .map(Plato::getId)
+                .toList();
+        if (!inactivos.isEmpty()) {
+            throw new OperacionInvalidaException(
+                    "No se pueden agregar platos inactivos al pedido: " + inactivos);
+        }
 
         // El turno guarda una entrada por unidad (asi suma el total): 2 pizzas = 2 filas.
         List<Plato> nuevos = new ArrayList<>();
@@ -174,6 +183,13 @@ public class TurnoService {
             pagoService.sincronizarMonto(pago.getId(), guardado.calcularTotal());
         }
         return new TurnoResponse(guardado);
+    }
+
+    private void validarPlatoActivo(Plato plato) {
+        if (!plato.isActivo()) {
+            throw new OperacionInvalidaException(
+                    "No se puede agregar el plato inactivo: " + plato.getId());
+        }
     }
 
     public TurnoResponse asociarPago(Long turnoId, PagoRequest request) {

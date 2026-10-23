@@ -134,10 +134,37 @@ Todas las peticiones y respuestas usan `Content-Type: application/json`.
 | Método | Endpoint | Descripción | Respuesta |
 |--------|----------|-------------|-----------|
 | `POST` | `/api/platos/crearPlato` | Crea un plato | `201 Created` |
-| `GET` | `/api/platos/listarPlatos` | Lista todos los platos | `200 OK` |
+| `GET` | `/api/platos/listarPlatos` | Lista todos los platos, activos e inactivos | `200 OK` |
 | `GET` | `/api/platos/obtenerPlato/{id}` | Obtiene un plato por su id | `200 OK` |
 | `PUT` | `/api/platos/actualizarPlato/{id}` | Actualiza un plato existente | `200 OK` |
+| `PATCH` | `/api/platos/desactivarPlato/{id}` | Desactiva un plato | `200 OK` |
+| `PATCH` | `/api/platos/activarPlato/{id}` | Reactiva un plato | `200 OK` |
 | `DELETE` | `/api/platos/eliminarPlato/{id}` | Elimina un plato | `204 No Content` |
+
+### Categorías — `/api/categorias`
+
+| Método | Endpoint | Descripción | Respuesta |
+|--------|----------|-------------|-----------|
+| `POST` | `/api/categorias/crearCategoria` | Crea una categoría | `201 Created` |
+| `GET` | `/api/categorias/listarCategorias` | Lista todas las categorías | `200 OK` |
+| `GET` | `/api/categorias/obtenerCategoria/{id}` | Obtiene una categoría por ID | `200 OK` |
+| `PUT` | `/api/categorias/actualizarCategoria/{id}` | Actualiza una categoría | `200 OK` |
+| `DELETE` | `/api/categorias/eliminarCategoria/{id}` | Elimina una categoría sin platos asignados | `204 No Content` |
+
+Para crear una categoría, enviar por ejemplo `{"nombre":"Entradas","emoji":"🥟"}`. El campo `emoji` es opcional y también se puede modificar al actualizar la categoría.
+
+Para crear o actualizar un plato se debe enviar `categoriaId`, correspondiente a una categoría existente. La respuesta incluye `categoriaId`, `categoriaNombre` y `activo`. Los platos inactivos no pueden agregarse a pedidos; se conservan en el listado y en los pedidos ya existentes.
+
+Ejemplo para crear un plato:
+
+```json
+{
+  "nombre": "Bruschetta",
+  "descripcion": "Pan tostado con tomate",
+  "precio": 4500,
+  "categoriaId": 1
+}
+```
 
 ### Turnos — `/api/turnos`
 
