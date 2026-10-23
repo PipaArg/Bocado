@@ -19,4 +19,7 @@ public class PlatoRequest {
     @NotNull(message = "El precio es obligatorio")
     @Positive(message = "El precio debe ser mayor a 0")
     private BigDecimal precio;
+
+    @NotNull(message = "La categoria es obligatoria")
+    private Long categoriaId;
 }

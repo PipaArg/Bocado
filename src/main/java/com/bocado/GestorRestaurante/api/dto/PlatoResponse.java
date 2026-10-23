@@ -12,6 +12,9 @@ public class PlatoResponse {
     private String nombre;
     private String descripcion;
     private BigDecimal precio;
+    private Long categoriaId;
+    private String categoriaNombre;
+    private boolean activo;
     private String tipo;
     private Map<String, Object> atributos;
 
@@ -21,5 +24,10 @@ public class PlatoResponse {
         this.nombre = plato.getNombre();
         this.descripcion = plato.getDescripcion();
         this.precio = plato.getPrecio();
+        if (plato.getCategoria() != null) {
+            this.categoriaId = plato.getCategoria().getId();
+            this.categoriaNombre = plato.getCategoria().getNombre();
+        }
+        this.activo = plato.isActivo();
     }
 }

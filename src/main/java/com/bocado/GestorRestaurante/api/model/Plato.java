@@ -6,17 +6,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.ColumnDefault;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Table(name = "platos")
 @Data
-@EqualsAndHashCode(exclude = "turnos")
+@EqualsAndHashCode(exclude = {"turnos", "categoria"})
 public class Plato {
 
     @Id
@@ -32,10 +35,15 @@ public class Plato {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
+
+    @Column(nullable = false)
+    @ColumnDefault("true")
+    private boolean activo = true;
+
     @ManyToMany(mappedBy = "platos")
     @JsonIgnore
     private List<Turno> turnos;
-
-
-
 }

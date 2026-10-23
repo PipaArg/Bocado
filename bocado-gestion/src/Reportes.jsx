@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
+import { api, EP } from "./api.js";
 
 /* ───────── Config ───────── */
-// URL del back
-const API = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
-
 // Fecha de hoy en formato AAAA-MM-DD (el que entiende el back)
 const HOY = new Date().toLocaleDateString("en-CA");
 
@@ -28,11 +26,7 @@ export default function Reportes({ onSalir }) {
     setCargando(true);
     setError("");
 
-    fetch(`${API}/api/reportes/dia?fecha=${fecha}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Error " + res.status);
-        return res.json();
-      })
+    api(`${EP.reporteDiario}?fecha=${encodeURIComponent(fecha)}`)
       .then((datos) => setReporte(datos))
       .catch((err) => {
         setReporte(null);

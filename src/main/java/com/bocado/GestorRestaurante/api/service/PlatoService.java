@@ -4,7 +4,9 @@ import com.bocado.GestorRestaurante.api.dto.PlatoRequest;
 import com.bocado.GestorRestaurante.api.dto.PlatoResponse;
 import com.bocado.GestorRestaurante.api.exception.RecursoDuplicadoException;
 import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
+import com.bocado.GestorRestaurante.api.model.Categoria;
 import com.bocado.GestorRestaurante.api.model.Plato;
+import com.bocado.GestorRestaurante.api.repository.CategoriaRepository;
 import com.bocado.GestorRestaurante.api.repository.PlatoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlatoService {
     private final PlatoRepository platoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public  PlatoResponse crearPlato(PlatoRequest request) {
+    public PlatoResponse crearPlato(PlatoRequest request) {
 
         validarNombreDisponible(request.getNombre());
 
@@ -25,6 +28,7 @@ public class PlatoService {
         plato.setNombre(request.getNombre());
         plato.setDescripcion(request.getDescripcion());
         plato.setPrecio(request.getPrecio());
+        plato.setCategoria(buscarCategoria(request.getCategoriaId()));
 
         Plato platoGuardado = platoRepository.save(plato);
 
@@ -48,6 +52,7 @@ public class PlatoService {
         plato.setPrecio(request.getPrecio());
         plato.setDescripcion(request.getDescripcion());
         plato.setNombre(request.getNombre());
+        plato.setCategoria(buscarCategoria(request.getCategoriaId()));
 
         Plato platoActualizado = platoRepository.save(plato);
         return new PlatoResponse(platoActualizado);
@@ -69,6 +74,19 @@ public class PlatoService {
                 .toList();
     }
 
+    public PlatoResponse cambiarActivo(Long id, boolean activo) {
+        Plato plato = platoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Plato no encontrado con id: " + id));
+        plato.setActivo(activo);
+        return new PlatoResponse(platoRepository.save(plato));
+    }
+
+    private Categoria buscarCategoria(Long id) {
+        return categoriaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontradoException(
+                        "Categoria no encontrada con id: " + id));
+    }
 
     private void validarNombreDisponible(String nombre) {
         if (platoRepository.existsByNombreIgnoreCase(nombre)) {

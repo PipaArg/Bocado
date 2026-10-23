@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PlatoRepository extends JpaRepository<Plato, Long> {
     boolean existsByNombreIgnoreCase(String nombre);
     boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
+    boolean existsByCategoria_Id(Long categoriaId);
 }
