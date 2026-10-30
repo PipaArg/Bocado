@@ -9,3 +9,5 @@
 # Binarios locales y secretos
 ngrok.exe
 .env
+/bocado-web/node_modules
+bocado-web/npm-error.log
