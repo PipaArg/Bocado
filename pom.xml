@@ -70,6 +70,12 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
+		<!-- Hash de contraseñas de usuarios -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+
 		<!-- Documentacion interactiva de la API (Swagger UI) -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
