@@ -22,6 +22,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class ManejadorGlobalErrores {
 
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ResponseEntity<Map<String, Object>> manejarCredencialesInvalidas(
+            CredencialesInvalidasException ex) {
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("status", 401);
+        respuesta.put("mensaje", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(respuesta);
+    }
+
     /*
      * ERROR 404 - RECURSO NO ENCONTRADO
      *

@@ -4,6 +4,7 @@ import Blobs from "../components/Blobs.jsx";
 import useOnline from "../hooks/useOnline.js";
 import useMenu from "../hooks/useMenu.js";
 import useTurnos from "../hooks/useTurnos.js";
+import { api, EP } from "../lib/api.js";
 import { fmtHora } from "../lib/format.js";
 import { suma, pedidoDe, cantidad, plat } from "../lib/pedido.js";
 import { nid } from "../lib/id.js";
@@ -46,10 +47,20 @@ export default function Mozos() {
   const abrirNota = (id) => { setNotaId(id); setDn(carrito.find((p) => p.id === id)?.nota ?? ""); setSheet("nota"); };
   const guardarNota = () => { setCarrito((c) => c.map((p) => (p.id === notaId ? { ...p, nota: dn.trim() } : p))); setSheet(null); };
 
-  const login = (e) => {
+  const login = async (e) => {
     e.preventDefault();
-    // TODO: poner acá la llamada a POST /api/mozos/login cuando exista ese endpoint.
-    setErr("Falta conectar la API de acceso de mozos.");
+    setErr("");
+    try {
+      const usuarioAutenticado = await api(EP.loginUsuario, {
+        method: "POST",
+        body: JSON.stringify({ usuario: usuario.trim(), clave }),
+      });
+      setMozo(usuarioAutenticado);
+      setTab("mesas");
+      setVista("mesas");
+    } catch (error) {
+      setErr(error.message);
+    }
   };
   const salir = () => { setSheet(null); setMozo(null); setUsuario(""); setTab("mesas"); setVista("login"); setMostrarReporte(false); };
   const abrirDatos = (modo) => {
@@ -135,7 +146,7 @@ export default function Mozos() {
           <input name="usuario" value={usuario} onChange={(e) => setUsuario(e.target.value)} placeholder="Usuario" autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="username" aria-label="Usuario" />
           <input name="clave" value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Contraseña" type="password" autoComplete="current-password" aria-label="Contraseña" />
         </div>
-        <p className="hint">TODO: conectar POST /api/mozos/login. El backend todavía no ofrece este endpoint.</p>
+        <p className="hint">Ingresá con tu usuario y contraseña.</p>
         {err && <p className="err" role="alert">{err}</p>}
         <button className="primary">Ingresar</button>
         <button type="button" className="sec" onClick={() => { setTab("reservas"); setVista("mesas"); }}>Ver turnos</button>
@@ -420,7 +431,7 @@ export default function Mozos() {
                 <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
               </span>
                   <h2>{mozo.nombre}</h2>
-                  <p className="sub">@{mozo.usuario} · Turno {mozo.turno}</p>
+                  <p className="sub">@{mozo.usuario} · {mozo.nivel}</p>
                   <div className="stats">
                     <span className="chip gris">{mias.length} mesas</span>
                     <span className="chip reservada">{pendientes} reservas pendientes</span>

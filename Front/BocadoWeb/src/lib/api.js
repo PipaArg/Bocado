@@ -2,11 +2,52 @@
 export const API = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
 
 export const EP = {
+  crearCategoria: "/api/categorias/crearCategoria",
   listarCategorias: "/api/categorias/listarCategorias",
+  obtenerCategoria: (id) => `/api/categorias/obtenerCategoria/${id}`,
+  actualizarCategoria: (id) => `/api/categorias/actualizarCategoria/${id}`,
+  eliminarCategoria: (id) => `/api/categorias/eliminarCategoria/${id}`,
+
+  crearCliente: "/api/clientes/crearCliente",
+  listarClientes: "/api/clientes/listarClientes",
+  obtenerCliente: (id) => `/api/clientes/obtenerCliente/${id}`,
+
+  crearUsuario: "/api/usuarios/crearUsuario",
+  loginUsuario: "/api/usuarios/login",
+  listarUsuarios: "/api/usuarios/listarUsuarios",
+  obtenerUsuario: (id) => `/api/usuarios/obtenerUsuario/${id}`,
+  actualizarUsuario: (id) => `/api/usuarios/actualizarUsuario/${id}`,
+  eliminarUsuario: (id) => `/api/usuarios/eliminarUsuario/${id}`,
+
+  crearPlato: "/api/platos/crearPlato",
   listarPlatos: "/api/platos/listarPlatos",
+  obtenerPlato: (id) => `/api/platos/obtenerPlato/${id}`,
+  actualizarPlato: (id) => `/api/platos/actualizarPlato/${id}`,
+  desactivarPlato: (id) => `/api/platos/desactivarPlato/${id}`,
+  activarPlato: (id) => `/api/platos/activarPlato/${id}`,
+  eliminarPlato: (id) => `/api/platos/eliminarPlato/${id}`,
+
+  /*Queda para realese post MVP
+  obtenerPago: (id) => `/api/pagos/obtenerPago/${id}`,
+  checkoutPago: (id) => `/api/pagos/${id}/checkout`,
+  reenviarRecibo: (id) => `/api/pagos/${id}/reenviar-recibo`,
+  qrPago: (id) => `/api/pagos/${id}/qr`,
+  webhookPago: "/api/pagos/webhook",
+  */
+
   listarTurnos: "/api/turnos/listarTurnos",
   crearTurno: "/api/turnos/crearTurno",
-  crearCliente: "/api/clientes/crearCliente",
+  obtenerTurno: (id) => `/api/turnos/obtenerTurno/${id}`,
+  actualizarTurno: (id) => `/api/turnos/actualizarTurno/${id}`,
+  cambiarEstadoTurno: (id) => `/api/turnos/cambiarEstado/${id}`,
+  eliminarTurno: (id) => `/api/turnos/eliminarTurno/${id}`,
+  agregarPlatoATurno: (turnoId, platoId) => `/api/turnos/${turnoId}/platos/${platoId}`,
+  reemplazarPlatosTurno: (turnoId) => `/api/turnos/${turnoId}/platos`,
+  asociarPagoATurno: (turnoId) => `/api/turnos/${turnoId}/pago`,
+  cerrarPagoTurno: (turnoId) => `/api/turnos/${turnoId}/cerrar-pago`,
+  pagarTurnoEnEfectivo: (turnoId) => `/api/turnos/${turnoId}/pago-efectivo`,
+  registrarCobroManual: (turnoId) => `/api/turnos/${turnoId}/pago-manual`,
+
   reporteDiario: "/api/reportes/dia",
 };
 
