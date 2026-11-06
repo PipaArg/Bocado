@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Reportes from "./Reportes.jsx";
 import Blobs from "../components/Blobs.jsx";
 import useOnline from "../hooks/useOnline.js";
 import useMenu from "../hooks/useMenu.js";
@@ -22,7 +21,6 @@ export default function Mozos() {
   const offline = !useOnline();
 
   const [vista, setVista] = useState("login"); // login | mesas | mesa | menu | items
-  const [mostrarReporte, setMostrarReporte] = useState(false);
   const [tab, setTab] = useState("mesas"); // mesas | reservas
   const [mesaId, setMesaId] = useState(null);
   const [cat, setCat] = useState(null);
@@ -55,14 +53,23 @@ export default function Mozos() {
         method: "POST",
         body: JSON.stringify({ usuario: usuario.trim(), clave }),
       });
+      sessionStorage.setItem("bocado.usuario", JSON.stringify(usuarioAutenticado));
+      window.dispatchEvent(new Event("bocado-sesion"));
       setMozo(usuarioAutenticado);
       setTab("mesas");
       setVista("mesas");
+      if (usuarioAutenticado.nivel === "ADMIN") {
+        window.location.hash = "#/admin";
+      }
     } catch (error) {
       setErr(error.message);
     }
   };
-  const salir = () => { setSheet(null); setMozo(null); setUsuario(""); setTab("mesas"); setVista("login"); setMostrarReporte(false); };
+  const salir = () => {
+    sessionStorage.removeItem("bocado.usuario");
+    window.dispatchEvent(new Event("bocado-sesion"));
+    setSheet(null); setMozo(null); setUsuario(""); setTab("mesas"); setVista("login");
+  };
   const abrirDatos = (modo) => {
     const d = mesa.desde ? new Date(mesa.desde) : new Date();
     setDq(mesa.quien === "Sin reserva" ? "" : mesa.quien);
@@ -133,10 +140,6 @@ export default function Mozos() {
   const categoriaActual = menu.find((categoria) => String(categoria.id) === String(cat));
   const titulo = vista === "mesas" ? (mozo ? `Hola, ${mozo.nombre}` : "Turnos") : vista === "mesa" ? `Mesa ${mesa?.num}` : vista === "menu" ? "Agregar platos" : categoriaActual?.nombre ?? "Platos";
 
-  if (mostrarReporte) {
-    return <Reportes onSalir={salir} />;
-  }
-
   /* ── Vistas ── */
   const loginView = () => (
       <form className="login" onSubmit={login}>
@@ -148,10 +151,7 @@ export default function Mozos() {
         </div>
         <p className="hint">Ingresá con tu usuario y contraseña.</p>
         {err && <p className="err" role="alert">{err}</p>}
-        <button className="primary">Ingresar</button>
-        <button type="button" className="sec" onClick={() => { setTab("reservas"); setVista("mesas"); }}>Ver turnos</button>
-        <button type="button" className="sec" onClick={() => setVista("menu")}>Ver menú</button>
-        <button type="button" className="sec" onClick={() => setMostrarReporte(true)}>Ver reporte del día</button>
+        <button className="primary">Login</button>
       </form>
   );
 

@@ -1,0 +1,30 @@
+.about{position:relative;min-height:100vh;overflow:hidden;padding:28px 20px 64px;color:#1d1d1f;background:linear-gradient(150deg,#dfe9ff,#f3e6ff 55%,#ffe7ef);font:16px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif}
+.about *{box-sizing:border-box}
+.about .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.65;pointer-events:none}
+.about .b1{width:380px;height:380px;top:-90px;left:-70px;background:#7db4ff}
+.about .b2{width:340px;height:340px;right:-40px;bottom:-80px;background:#ff9fc4}
+.about .b3{width:260px;height:260px;bottom:18%;left:12%;background:#8ee8c0}
+.about-wrap{position:relative;max-width:1160px;margin:0 auto}
+.about-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:58px}
+.about-brand{color:inherit;text-decoration:none;font-size:25px;font-weight:800;letter-spacing:-.05em}
+.about-header nav{display:flex;gap:9px}
+.about-header nav a{padding:9px 15px;border:1px solid #ffffffbd;border-radius:999px;background:#ffffff80;color:inherit;text-decoration:none;font-size:14px;backdrop-filter:blur(16px)}
+.about-intro{max-width:700px;margin:0 auto 48px;text-align:center}
+.about-eyebrow{margin:0 0 10px;color:#6e6e73;font-size:13px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+.about-intro h1{margin:0;font-size:clamp(38px,7vw,68px);line-height:1.04;letter-spacing:-.055em}
+.about-intro>p:last-child{max-width:580px;margin:18px auto 0;color:#606067;font-size:18px}
+.about-team{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;align-items:start}
+.about-member{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px 16px 20px;border:1px solid #ffffffc9;border-radius:28px;background:#ffffff80;text-align:center;backdrop-filter:blur(18px);box-shadow:0 20px 55px -35px #34467885}
+.about-photo{position:relative;display:grid;place-items:center;width:min(100%,170px);aspect-ratio:1;overflow:hidden;border:5px solid #ffffffb8;border-radius:50%;color:#526a98;box-shadow:0 12px 30px #34467820}
+.about-photo svg{position:absolute;inset:0;width:100%;height:100%}
+.about-photo span{position:relative;margin-top:64%;padding:3px 10px;border-radius:999px;background:#ffffffcc;color:#55555c;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.about-photo.lavanda{background:linear-gradient(145deg,#d9ccff,#aebaff);color:#6753a0}
+.about-photo.durazno{background:linear-gradient(145deg,#ffe0c5,#f7a998);color:#a75c56}
+.about-photo.menta{background:linear-gradient(145deg,#c7f1df,#8dcdb9);color:#3f8170}
+.about-photo.rosa{background:linear-gradient(145deg,#ffd5e4,#eda5c4);color:#a35478}
+.about-photo.cielo{background:linear-gradient(145deg,#cbe9ff,#83b8df);color:#386c91}
+.about-member h2{margin:19px 0 2px;font-size:19px;letter-spacing:-.02em}
+.about-member p{margin:0;color:#6e6e73;font-size:14px}
+.about-index{position:absolute;top:17px;right:18px;color:#8e8e93;font-size:11px;font-weight:700;letter-spacing:.08em}
+@media(max-width:900px){.about-team{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:580px){.about{padding:20px 14px 40px}.about-header{margin-bottom:42px}.about-intro{margin-bottom:32px}.about-intro>p:last-child{font-size:16px}.about-team{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.about-member{padding:20px 10px 16px;border-radius:22px}.about-photo{width:min(100%,140px)}.about-member h2{font-size:17px}.about-header nav{gap:5px}.about-header nav a{padding:8px 10px;font-size:12px}}

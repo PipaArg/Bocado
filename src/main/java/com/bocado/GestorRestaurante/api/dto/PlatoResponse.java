@@ -15,7 +15,6 @@ public class PlatoResponse {
     private Long categoriaId;
     private String categoriaNombre;
     private boolean activo;
-    private String tipo;
     private Map<String, Object> atributos;
 
 

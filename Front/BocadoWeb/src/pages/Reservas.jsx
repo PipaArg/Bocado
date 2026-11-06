@@ -160,7 +160,10 @@ export default function Reservas() {
         <div className="shell">
           <header className="top">
             <span className="logo">bocado</span>
-            <button className="pill" onClick={() => setLista(true)}>Turnos{turnos.length ? ` · ${turnos.length}` : ""}</button>
+            <div className="top-actions">
+              <a className="pill about-link" href="#/sobre-nosotros">Sobre nosotros</a>
+              <button className="pill" onClick={() => setLista(true)}>Turnos{turnos.length ? ` · ${turnos.length}` : ""}</button>
+            </div>
           </header>
 
           {demo && (

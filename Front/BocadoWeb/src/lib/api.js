@@ -27,6 +27,13 @@ export const EP = {
   activarPlato: (id) => `/api/platos/activarPlato/${id}`,
   eliminarPlato: (id) => `/api/platos/eliminarPlato/${id}`,
 
+  crearMesa: "/api/mesas/crearMesa",
+  listarMesas: "/api/mesas/listarMesas",
+  actualizarMesa: (id) => `/api/mesas/actualizarMesa/${id}`,
+  desactivarMesa: (id) => `/api/mesas/desactivarMesa/${id}`,
+  activarMesa: (id) => `/api/mesas/activarMesa/${id}`,
+  eliminarMesa: (id) => `/api/mesas/eliminarMesa/${id}`,
+
   /*Queda para realese post MVP
   obtenerPago: (id) => `/api/pagos/obtenerPago/${id}`,
   checkoutPago: (id) => `/api/pagos/${id}/checkout`,
