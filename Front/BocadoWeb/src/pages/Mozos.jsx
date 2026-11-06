@@ -7,7 +7,7 @@ import { api, EP } from "../lib/api.js";
 import { fmtHora } from "../lib/format.js";
 import { suma, pedidoDe, cantidad, plat } from "../lib/pedido.js";
 import { nid } from "../lib/id.js";
-import { ESTADO, EVENTOS, NOTAS } from "../data/mozos.js";
+import { ESTADO, EVENTOS, NOTAS } from "../constants/mozos.js";
 import css from "../styles/mozos.css?inline";
 
 const hora = fmtHora;

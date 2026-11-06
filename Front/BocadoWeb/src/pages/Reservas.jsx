@@ -3,7 +3,7 @@ import Blobs from "../components/Blobs.jsx";
 import useTurnos from "../hooks/useTurnos.js";
 import { api, API, EP } from "../lib/api.js";
 import { iso, pasado, fechaLarga, emailOk } from "../lib/format.js";
-import { HOY, DIAS, ALMUERZO, CENA, TITULOS, MAX_NOTA } from "../data/reservas.js";
+import { HOY, DIAS, ALMUERZO, CENA, TITULOS, MAX_NOTA } from "../constants/reservas.js";
 import css from "../styles/reservas.css?inline";
 
 export default function Reservas() {
