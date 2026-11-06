@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, EP } from "../lib/api.js";
+import {getReporteDiario} from "../services/reportes/getReporteDiario.js";
 import css from "../styles/reportes.css?inline";
 
 /* ───────── Config ───────── */
@@ -34,6 +35,10 @@ export default function Reportes({ onSalir }) {
       })
       .finally(() => setCargando(false));
   }, [fecha]);
+
+    //useEffect(() => {
+        //getReporteDiario().then((res) => (Object.entries(res)))
+    //}, [])
 
   return (
     <div className="rep">

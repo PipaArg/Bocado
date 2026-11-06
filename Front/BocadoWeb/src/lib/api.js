@@ -1,5 +1,3 @@
-// URL del backend: en Vercel se define con VITE_API_URL; en local usa localhost.
-export const API = (import.meta.env.VITE_API_URL || "http://localhost:8080").replace(/\/$/, "");
 
 export const EP = {
   crearCategoria: "/api/categorias/crearCategoria",
