@@ -5,9 +5,11 @@ import com.bocado.GestorRestaurante.api.dto.UsuarioActualizarRequest;
 import com.bocado.GestorRestaurante.api.dto.UsuarioRequest;
 import com.bocado.GestorRestaurante.api.dto.UsuarioResponse;
 import com.bocado.GestorRestaurante.api.exception.CredencialesInvalidasException;
+import com.bocado.GestorRestaurante.api.exception.OperacionInvalidaException;
 import com.bocado.GestorRestaurante.api.exception.RecursoDuplicadoException;
 import com.bocado.GestorRestaurante.api.exception.RecursoNoEncontradoException;
 import com.bocado.GestorRestaurante.api.model.Usuario;
+import com.bocado.GestorRestaurante.api.repository.MesaRepository;
 import com.bocado.GestorRestaurante.api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final MesaRepository mesaRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     public UsuarioResponse crearUsuario(UsuarioRequest request) {
@@ -62,6 +65,10 @@ public class UsuarioService {
     }
 
     public void eliminarUsuario(Long id) {
+        if (mesaRepository.existsByMozoId(id)) {
+            throw new OperacionInvalidaException(
+                    "No se puede eliminar el usuario porque está asignado a una o más mesas");
+        }
         usuarioRepository.delete(buscarUsuario(id));
     }
 

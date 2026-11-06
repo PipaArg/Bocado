@@ -21,6 +21,10 @@ public class Mesa {
     @Column(nullable = false)
     private Integer capacidad;
 
+    @ManyToOne
+    @JoinColumn(name = "mozo_id")
+    private Usuario mozo;
+
     @Column(nullable = false)
     private boolean activa = true;
 }

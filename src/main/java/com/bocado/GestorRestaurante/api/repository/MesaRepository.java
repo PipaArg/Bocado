@@ -7,4 +7,6 @@ public interface MesaRepository extends JpaRepository<Mesa, Long> {
     boolean existsByNumero(Integer numero);
 
     boolean existsByNumeroAndIdNot(Integer numero, Long id);
+
+    boolean existsByMozoId(Long mozoId);
 }
