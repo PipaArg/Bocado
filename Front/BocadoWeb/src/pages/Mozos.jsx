@@ -14,8 +14,9 @@ const hora = fmtHora;
 
 export default function Mozos() {
   const [mozo, setMozo] = useState(null);
-  // TODO: cargar mesas desde GET /api/mesas/mozo/{id} cuando exista ese endpoint.
   const [mesas, setMesas] = useState([]);
+  const [mesasCargando, setMesasCargando] = useState(false);
+  const [mesasError, setMesasError] = useState("");
   const { turnos: reservas, setTurnos: setReservas, cargando: turnosCargando, error: turnosError, recargar: recargarTurnos } = useTurnos();
   const { menu, cargando: menuCargando, error: menuError, recargar: recargarMenu } = useMenu();
   const offline = !useOnline();
@@ -35,7 +36,7 @@ export default function Mozos() {
   const [notaId, setNotaId] = useState(null);
   const [dn, setDn] = useState("");
 
-  const mias = mesas.filter((m) => m.mozo === mozo?.usuario);
+  const mias = mesas.filter((m) => m.mozoId === mozo?.id);
   const mesa = mesas.find((m) => m.id === mesaId);
   const resDe = (m) => reservas.find((r) => r.mesaId === m.id && r.estado === "PENDIENTE");
   const est = (m) => (m.estado === "LIBRE" && resDe(m) ? "RESERVADA" : m.estado);
@@ -44,6 +45,31 @@ export default function Mozos() {
   const upd = (id, fn) => setMesas((ms) => ms.map((m) => (m.id === id ? fn(m) : m)));
   const abrirNota = (id) => { setNotaId(id); setDn(carrito.find((p) => p.id === id)?.nota ?? ""); setSheet("nota"); };
   const guardarNota = () => { setCarrito((c) => c.map((p) => (p.id === notaId ? { ...p, nota: dn.trim() } : p))); setSheet(null); };
+
+  const cargarMesas = async (usuarioAutenticado) => {
+    setMesasCargando(true);
+    setMesasError("");
+    try {
+      const lista = await api(EP.listarMesas);
+      setMesas(lista
+        .filter((m) => m.activa && m.mozoId === usuarioAutenticado.id)
+        .map((m) => ({
+          id: m.id,
+          mozoId: m.mozoId,
+          num: m.numero,
+          cap: m.capacidad,
+          estado: "LIBRE",
+          hist: [],
+          desde: null,
+          quien: "",
+          evento: "",
+        })));
+    } catch (error) {
+      setMesasError(error.message);
+    } finally {
+      setMesasCargando(false);
+    }
+  };
 
   const login = async (e) => {
     e.preventDefault();
@@ -58,6 +84,7 @@ export default function Mozos() {
       setMozo(usuarioAutenticado);
       setTab("mesas");
       setVista("mesas");
+      await cargarMesas(usuarioAutenticado);
       if (usuarioAutenticado.nivel === "ADMIN") {
         window.location.hash = "#/admin";
       }
@@ -175,7 +202,14 @@ export default function Mozos() {
                 ))}
               </div>
               <h2>Tus mesas</h2>
-              {mias.length === 0 && <p className="sub">TODO: cargar las mesas desde la API de mesas asignadas al mozo.</p>}
+              {mesasCargando && <p className="sub">Cargando tus mesas…</p>}
+              {mesasError && (
+                <div className="err" role="alert">
+                  <p>No se pudieron cargar las mesas: {mesasError}</p>
+                  <button className="sec" onClick={() => cargarMesas(mozo)}>Reintentar</button>
+                </div>
+              )}
+              {!mesasCargando && !mesasError && mias.length === 0 && <p className="sub">No tenés mesas asignadas.</p>}
               <div className="grid tres">
                 {mias.map((m) => {
                   const e = est(m);

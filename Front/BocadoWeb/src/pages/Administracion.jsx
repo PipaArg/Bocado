@@ -5,7 +5,7 @@ import css from "../styles/administracion.css?inline";
 const usuarioVacio = { usuario: "", nombre: "", apellido: "", clave: "", nivel: "MOZO", activo: true };
 const categoriaVacia = { nombre: "", emoji: "" };
 const platoVacio = { nombre: "", descripcion: "", precio: "", categoriaId: "" };
-const mesaVacia = { numero: "", capacidad: "" };
+const mesaVacia = { numero: "", capacidad: "", mozoId: "" };
 
 const obtenerDatos = () => Promise.all([
   api(EP.listarUsuarios),
@@ -29,6 +29,7 @@ export default function Administracion() {
   const [ocupado, setOcupado] = useState(false);
   const [error, setError] = useState("");
   const [aviso, setAviso] = useState("");
+  const mozosActivos = usuarios.filter((u) => u.nivel === "MOZO" && u.activo);
 
   const cargar = useCallback(async () => {
     try {
@@ -123,7 +124,11 @@ export default function Administracion() {
   const guardarMesa = (event) => {
     event.preventDefault();
     const editId = editando?.tipo === "mesa" ? editando.id : null;
-    const body = { numero: Number(mesaForm.numero), capacidad: Number(mesaForm.capacidad) };
+    const body = {
+      numero: Number(mesaForm.numero),
+      capacidad: Number(mesaForm.capacidad),
+      mozoId: mesaForm.mozoId ? Number(mesaForm.mozoId) : null,
+    };
     ejecutar(() => api(editId ? EP.actualizarMesa(editId) : EP.crearMesa, {
       method: editId ? "PUT" : "POST",
       body: JSON.stringify(body),
@@ -149,7 +154,7 @@ export default function Administracion() {
   };
   const editarMesa = (m) => {
     setEditando({ tipo: "mesa", id: m.id });
-    setMesaForm({ numero: m.numero, capacidad: m.capacidad });
+    setMesaForm({ numero: m.numero, capacidad: m.capacidad, mozoId: m.mozoId || "" });
   };
   const cancelarEdicion = () => {
     setEditando(null);
@@ -230,6 +235,13 @@ export default function Administracion() {
       <div className="adm-fields">
         <label>Número<input required type="number" min="1" step="1" value={mesaForm.numero} onChange={(e) => setMesaForm({ ...mesaForm, numero: e.target.value })} /></label>
         <label>Capacidad<input required type="number" min="1" step="1" value={mesaForm.capacidad} onChange={(e) => setMesaForm({ ...mesaForm, capacidad: e.target.value })} /></label>
+        <label>Mozo asignado<select value={mesaForm.mozoId} onChange={(e) => setMesaForm({ ...mesaForm, mozoId: e.target.value })}>
+          <option value="">Sin asignar</option>
+          {editando?.tipo === "mesa" && !mozosActivos.some((u) => String(u.id) === String(mesaForm.mozoId)) && mesaForm.mozoId && (
+            <option value={mesaForm.mozoId}>{mesas.find((m) => m.id === editando.id)?.mozoNombre || "Mozo asignado"} (asignado)</option>
+          )}
+          {mozosActivos.map((u) => <option key={u.id} value={u.id}>{u.nombre} {u.apellido}</option>)}
+        </select></label>
       </div>
       <div className="adm-actions"><button className="adm-primary" disabled={ocupado}>{editando?.tipo === "mesa" ? "Guardar cambios" : "Crear mesa"}</button>
         {editando?.tipo === "mesa" && <button type="button" onClick={cancelarEdicion}>Cancelar</button>}</div>
@@ -297,7 +309,7 @@ export default function Administracion() {
                 <section className="adm-list"><h2>Mesas <span>{mesas.length}</span></h2>
                   {mesas.length === 0 ? <p className="adm-help">Todavía no hay mesas.</p> : mesas.map((m) => (
                     <article className="adm-row" key={m.id}>
-                      <div className="adm-primary-info"><b>Mesa {m.numero}</b><small>Capacidad: {m.capacidad} personas</small></div>
+                      <div className="adm-primary-info"><b>Mesa {m.numero}</b><small>Capacidad: {m.capacidad} personas · {m.mozoNombre ? `Mozo: ${m.mozoNombre}` : "Sin mozo asignado"}</small></div>
                       <span className={`adm-status ${m.activa ? "active" : ""}`}>{m.activa ? "Activa" : "Inactiva"}</span>
                       <button onClick={() => editarMesa(m)}>Editar</button>
                       <button disabled={ocupado} onClick={() => cambiarEstadoMesa(m)}>{m.activa ? "Desactivar" : "Activar"}</button>

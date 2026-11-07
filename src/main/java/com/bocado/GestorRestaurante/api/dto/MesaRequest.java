@@ -13,4 +13,7 @@ public class MesaRequest {
     @NotNull(message = "La capacidad es obligatoria")
     @Positive(message = "La capacidad debe ser mayor a 0")
     private Integer capacidad;
+
+    @Positive(message = "El mozo asignado debe ser válido")
+    private Long mozoId;
 }
