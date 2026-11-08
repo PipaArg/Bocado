@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, EP } from "../lib/api.js";
+import { listarCategoria } from "../services/categorias/listarCategoria";
+import { listarPlatos } from "../services/platos/listarPlatos";
 
 export default function useMenu() {
   const [menu, setMenu] = useState([]);
@@ -13,7 +14,7 @@ export default function useMenu() {
       setCargando(true);
       setError("");
       try {
-        const [categorias, platos] = await Promise.all([api(EP.listarCategorias), api(EP.listarPlatos)]);
+        const [categorias, platos] = await Promise.all([listarCategoria(), listarPlatos()]);
         if (!Array.isArray(categorias) || !Array.isArray(platos)) throw new Error("La API devolvió un menú inválido");
         if (!cancelado) {
           setMenu(categorias.map((c) => ({ ...c, items: platos.filter((p) => p.categoriaId === c.id) })));

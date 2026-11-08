@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { api, EP } from "../lib/api.js";
+import { listarTurnos } from "../services/turnos/listarTurnos";
 
 export default function useTurnos() {
   const [turnos, setTurnos] = useState([]);
@@ -13,7 +13,7 @@ export default function useTurnos() {
       setCargando(true);
       setError("");
       try {
-        const data = await api(EP.listarTurnos);
+        const data = await listarTurnos();
         if (!Array.isArray(data)) throw new Error("La API devolvió una lista de turnos inválida");
         if (!cancelado) setTurnos(data);
       } catch (e) {
