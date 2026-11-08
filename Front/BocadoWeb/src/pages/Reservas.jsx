@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Blobs from "../components/Blobs.jsx";
 import useTurnos from "../hooks/useTurnos.js";
-import { api, API, EP } from "../lib/api.js";
+import { useReservaForm } from "../hooks/useReservaForm.js";
 import { iso, pasado, fechaLarga, emailOk } from "../lib/format.js";
 import { HOY, DIAS, ALMUERZO, CENA, TITULOS, MAX_NOTA } from "../constants/reservas.js";
 import css from "../styles/reservas.css?inline";
@@ -11,63 +11,13 @@ export default function Reservas() {
   const demo = Boolean(errorCarga);
   const [lista, setLista] = useState(false);
 
-  const [step, setStep] = useState(0);
-  const [fecha, setFecha] = useState(HOY);
-  const [hora, setHora] = useState("");
-  const [comensales, setComensales] = useState(2);
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [nota, setNota] = useState("");
-
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
-  const [creado, setCreado] = useState(null);
-
-  const telOk = !telefono.trim() || telefono.replace(/\D/g, "").length >= 8;
-  const datosOk = nombre.trim().length > 1 && apellido.trim().length > 1 && emailOk(email) && telOk;
-
-  const next = () => setStep((s) => Math.min(s + 1, 4));
-  const back = () => setStep((s) => Math.max(s - 1, 0));
-
-  const elegirDia = (d) => {
-    setFecha(d);
-    if (d === HOY && hora && pasado(hora)) setHora("");
-  };
-  const elegirHora = (h) => { setHora(h); setTimeout(next, 220); };
-
-  const reset = () => {
-    setStep(0); setFecha(HOY); setHora(""); setComensales(2);
-    setNombre(""); setApellido(""); setEmail(""); setTelefono(""); setNota(""); setCreado(null); setError("");
-  };
-
-  const enviar = async () => {
-    setSending(true); setError("");
-    try {
-      // 1) Se da de alta el cliente siempre (sin chequear si ya existe)
-      const datosCliente = { nombre: nombre.trim(), apellido: apellido.trim(), email: email.trim(), telefono: telefono.trim() || null };
-      const cli = demo
-          ? { id: Math.floor(Math.random() * 900 + 100), ...datosCliente }
-          : await api(EP.crearCliente, { method: "POST", body: JSON.stringify(datosCliente) });
-      // 2) Se crea el turno apuntando a ese cliente (TurnoRequest usa clienteId)
-      const body = {
-        fecha, hora, cantidadComensales: comensales,
-        clienteId: cli.id,
-        nota: nota.trim() || null,
-      };
-      const res = demo
-          ? { ...body, id: Math.floor(Math.random() * 900 + 100), clienteNombre: `${cli.nombre} ${cli.apellido}` }
-          : await api(EP.crearTurno, { method: "POST", body: JSON.stringify(body) });
-      setCreado(res);
-      setTurnos((t) => [res, ...t]);
-    } catch (err) {
-      setError(/fetch|network/i.test(err.message)
-          ? "No se pudo conectar con el servidor. Revisá que la API esté corriendo y que CORS permita este origen."
-          : err.message);
-    }
-    setSending(false);
-  };
+  const {
+    step, fecha, hora, comensales, setComensales,
+    nombre, setNombre, apellido, setApellido, email, setEmail, telefono, setTelefono, nota, setNota,
+    sending, error, creado,
+    telOk, datosOk,
+    next, back, elegirDia, elegirHora, reset, enviar
+  } = useReservaForm(turnos, setTurnos, demo);
 
   const Pasos = [
     /* 0 · Fecha y hora */
@@ -97,10 +47,10 @@ export default function Reservas() {
     </>,
 
     /* 1 · Comensales */
-    <div className="center">
+    <div className="center" key="step-1">
       <div className="stepper">
         <button aria-label="Menos" onClick={() => setComensales((n) => Math.max(1, n - 1))}>−</button>
-        <output key={comensales}>{comensales}</output>
+        <output>{comensales}</output>
         <button aria-label="Más" onClick={() => setComensales((n) => Math.min(20, n + 1))}>+</button>
       </div>
       <p className="sub">{comensales === 1 ? "comensal" : "comensales"}</p>
@@ -108,7 +58,7 @@ export default function Reservas() {
     </div>,
 
     /* 2 · Datos del cliente */
-    <form className="form" onSubmit={(e) => { e.preventDefault(); if (datosOk) next(); }}>
+    <form className="form" key="step-2" onSubmit={(e) => { e.preventDefault(); if (datosOk) next(); }}>
       <div className="fields">
         <input value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" autoComplete="given-name" aria-label="Nombre" />
         <input value={apellido} onChange={(e) => setApellido(e.target.value)} placeholder="Apellido" autoComplete="family-name" aria-label="Apellido" />
@@ -121,7 +71,7 @@ export default function Reservas() {
     </form>,
 
     /* 3 · Nota */
-    <>
+    <div key="step-3">
       <div className="fields">
         <textarea
             value={nota}
@@ -134,10 +84,10 @@ export default function Reservas() {
       </div>
       <p className="hint right">{nota.length}/{MAX_NOTA}</p>
       <button className="primary" onClick={next}>{nota.trim() ? "Continuar" : "Omitir"}</button>
-    </>,
+    </div>,
 
     /* 4 · Confirmar */
-    <>
+    <div key="step-4">
       <dl className="summary">
         <div><dt>Día</dt><dd>{fechaLarga(fecha)}</dd></div>
         <div><dt>Hora</dt><dd>{hora}</dd></div>
@@ -149,7 +99,7 @@ export default function Reservas() {
       </dl>
       {error && <p className="err" role="alert">{error}</p>}
       <button className="primary" disabled={sending} onClick={enviar}>{sending ? "Reservando…" : "Confirmar reserva"}</button>
-    </>,
+    </div>,
   ];
 
   return (
@@ -167,7 +117,7 @@ export default function Reservas() {
           </header>
 
           {demo && (
-              <p className="demo">Sin conexión a {API}. Modo demo: no se guarda nada. <button onClick={cargar}>Reintentar</button></p>
+              <p className="demo">Sin conexión al servidor. Modo demo: no se guarda nada. <button onClick={cargar}>Reintentar</button></p>
           )}
 
           <section className="card" aria-live="polite">
