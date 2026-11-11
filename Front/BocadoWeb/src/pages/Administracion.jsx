@@ -16,6 +16,8 @@ import { actualizarMesa } from "../services/mesas/actualizarMesa";
 import { activarMesa } from "../services/mesas/activarMesa";
 import { desactivarMesa } from "../services/mesas/desactivarMesa";
 import { actualizarPlato } from "../services/platos/actualizarPlato";
+import { activarPlato } from "../services/platos/activarPlato";
+import { desactivarPlato } from "../services/platos/desactivarPlato";
 
 const usuarioVacio = { usuario: "", nombre: "", apellido: "", clave: "", nivel: "MOZO", activo: true };
 const categoriaVacia = { nombre: "", emoji: "" };
@@ -194,6 +196,11 @@ export default function Administracion() {
     ejecutar(accion, `Mesa ${m.activa ? "desactivada" : "activada"}.`);
   };
 
+  const cambiarEstadoPlato = (p) => {
+    const accion = p.activo ? () => desactivarPlato(p.id) : () => activarPlato(p.id);
+    ejecutar(accion, `Plato ${p.activo ? "desactivado" : "activado"}.`);
+  };
+
   const eliminarCategoria = (categoria) => {
     if (!window.confirm(`¿Eliminar la categoría "${categoria.nombre}"?`)) return;
     ejecutar(() => eliminarCategoriaService(categoria.id), "Categoría eliminada.");
@@ -318,6 +325,7 @@ export default function Administracion() {
                             <div className="adm-primary-info"><b>{p.nombre}</b><small>{p.categoriaNombre} · ${Number(p.precio).toLocaleString("es-AR")}</small></div>
                             <span className={`adm-status ${p.activo ? "active" : ""}`}>{p.activo ? "Activo" : "Inactivo"}</span>
                             <button onClick={() => editarPlato(p)}>Editar</button>
+                            <button disabled={ocupado} onClick={() => cambiarEstadoPlato(p)}>{p.activo ? "Desactivar" : "Activar"}</button>
                           </article>
                       ))}
                     </section>

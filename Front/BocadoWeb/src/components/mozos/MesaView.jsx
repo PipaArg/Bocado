@@ -21,7 +21,7 @@ export default function MesaView({
                 </div>
 
                 {e === "LIBRE" ? (
-                    <p className="sub">Mesa libre. Abrila cuando se sienten.</p>
+                    <div className="mesa-section"><p className="sub">Mesa libre. Abrila cuando se sienten.</p></div>
                 ) : (
                     <div className="datos">
                         <div className="row-h">
@@ -41,26 +41,30 @@ export default function MesaView({
                 {e === "A_PAGAR" && <div className="bill"><small>Cuenta pedida</small><b>{plat(n)}</b></div>}
                 {activa && (
                     <>
-                        <h2>Pedido</h2>
-                        {n === 0 && <p className="sub">Todavía no hay platos en esta mesa.</p>}
-                        {pedidoDe(mesa).map((p) => (
-                            <div className="line" key={p.id + (p.nota || "")}>
-                                <span className="grow">{p.nombre}{p.nota && <small className="nota">“{p.nota}”</small>}</span>
-                                <b>×{p.cant}</b>
-                            </div>
-                        ))}
-                        <h2>Historial</h2>
-                        <ol className="hist">
-                            {mesa.hist.map((h) => (
-                                <li key={h.id}>
-                                    <time>{hora(h.ts)}</time>
-                                    <div>
-                                        <b>{{ ocupada: "Pasó a ocupada", pagar: "Pasó a pagar", reabrir: "Volvió a ocupada" }[h.tipo] ?? `Agregó ${plat(suma(h.items))}`}</b>
-                                        {h.tipo === "pedido" && <ul>{h.items.map((i) => <li key={i.id}>{i.cant}× {i.nombre}{i.nota ? ` — ${i.nota}` : ""}</li>)}</ul>}
-                                    </div>
-                                </li>
+                        <section className="mesa-section">
+                            <h2>Pedido</h2>
+                            {n === 0 && <p className="sub">Todavía no hay platos en esta mesa.</p>}
+                            {pedidoDe(mesa).map((p) => (
+                                <div className="line" key={p.id + (p.nota || "")}>
+                                    <span className="grow">{p.nombre}{p.nota && <small className="nota">“{p.nota}”</small>}</span>
+                                    <b>×{p.cant}</b>
+                                </div>
                             ))}
-                        </ol>
+                        </section>
+                        <section className="mesa-section">
+                            <h2>Historial</h2>
+                            <ol className="hist">
+                                {mesa.hist.map((h) => (
+                                    <li key={h.id}>
+                                        <time>{hora(h.ts)}</time>
+                                        <div>
+                                            <b>{{ ocupada: "Pasó a ocupada", pagar: "Pasó a pagar", reabrir: "Volvió a ocupada" }[h.tipo] ?? `Agregó ${plat(suma(h.items))}`}</b>
+                                            {h.tipo === "pedido" && <ul>{h.items.map((i) => <li key={i.id}>{i.cant}× {i.nombre}{i.nota ? ` — ${i.nota}` : ""}</li>)}</ul>}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ol>
+                        </section>
                     </>
                 )}
             </div>
