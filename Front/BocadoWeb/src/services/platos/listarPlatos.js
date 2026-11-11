@@ -6,7 +6,7 @@ export const listarPlatos= async () => {
         const respuesta = await axios.get(baseURL+'/api/platos/listarPlatos')
         return respuesta.data
     } catch (error) {
-        return error
+        console.error("Error al listar los platos:", error)
+        throw error
     }
-
 }

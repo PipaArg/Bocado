@@ -7,7 +7,7 @@ export default function ItemsView({
     const n = suma(carrito);
     if (!categoriaActual) {
         return (
-            <div className="body">
+            <div className="body menu-items">
                 <p className="sub">La categoría seleccionada ya no está disponible.</p>
                 <button className="primary" onClick={() => setVista("menu")}>Volver al menú</button>
             </div>
@@ -25,6 +25,7 @@ export default function ItemsView({
                         <div key={id} className={"item" + (c ? " on" : "") + (desactivado ? " off" : "")}>
                             <button className="add" disabled={desactivado} onClick={() => sumar(plato)}>
                                 {plato.nombre}
+                                {plato.descripcion && <small className="menu-description">{plato.descripcion}</small>}
                                 {desactivado && <small>No disponible</small>}
                                 {linea?.nota && <small className="nota">“{linea.nota}”</small>}
                             </button>

@@ -41,7 +41,7 @@
 .grid{display:grid;gap:12px}
 .mesa{aspect-ratio:1;border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
   background:color-mix(in srgb,var(--c) 20%,rgba(255,255,255,.4));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border:1px solid color-mix(in srgb,var(--c) 40%,rgba(255,255,255,.85));box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:transform .15s}
+  border:1px solid color-mix(in srgb,var(--c) 60%,rgba(255,255,255,.85));box-shadow:0 2px 8px rgba(29,29,31,.19),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .15s}
 .mesa:active{transform:scale(.96)}
 .mesa b{font-size:60px;line-height:1;font-weight:700;letter-spacing:-.05em}
 .mesa span{font-weight:600;font-size:15px;display:flex;align-items:center;gap:6px}
@@ -53,9 +53,13 @@
 .res>b{font-size:22px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .nota{font-style:italic}
 .info{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.info div{background:rgba(255,255,255,.6);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.info div{background:rgba(255,255,255,.6);border:1px solid rgba(29,29,31,.19);border-radius:18px;padding:12px 14px;box-shadow:0 2px 8px rgba(29,29,31,.19);display:flex;flex-direction:column;gap:2px}
 .info small{font-size:12px;color:var(--mute)}.info b{font-size:24px;letter-spacing:-.02em}
-.datos{border-radius:22px;background:rgba(255,255,255,.62);padding:14px 16px}
+.datos{border:1px solid rgba(29,29,31,.19);border-radius:22px;background:rgba(255,255,255,.62);padding:14px 16px;box-shadow:0 2px 8px rgba(29,29,31,.19)}
+.mesa-section{display:flex;flex-direction:column;gap:10px;padding:14px 16px;border:1px solid rgba(29,29,31,.19);border-radius:22px;background:rgba(255,255,255,.55);box-shadow:0 2px 8px rgba(29,29,31,.19)}
+.mesa-section h2{margin:0}
+.mesa-section .line{border:1px solid rgba(29,29,31,.12)}
+.mesa-section .hist{padding-top:0;padding-bottom:0;background:transparent}
 .datos dl{margin:8px 0 0}
 .datos dl div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid #0000000f}
 .datos dt{color:var(--mute);flex:none}.datos dd{margin:0;font-weight:600;text-align:right;overflow-wrap:anywhere}
@@ -67,10 +71,13 @@
 .qty button{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.07)!important;font-size:22px;line-height:1}
 .qty b{min-width:1.2ch;text-align:center;font-size:18px}
 .cats{grid-template-columns:repeat(2,1fr)}
-.cat{aspect-ratio:1;border-radius:26px;background:rgba(255,255,255,.65)!important;border:1px solid var(--edge)!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .15s}
+.cat{aspect-ratio:1;border-radius:26px;background:rgba(255,255,255,.65)!important;border:1px solid rgba(29,29,31,.19)!important;box-shadow:0 2px 8px rgba(29,29,31,.19);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .15s}
 .cat:active{transform:scale(.96)}
 .cat .ico{font-size:46px;line-height:1}.cat b{font-size:18px;text-transform:capitalize;letter-spacing:-.02em}.cat small{font-size:12.5px;color:var(--mute)}
 .item{padding:0;min-height:84px;overflow:hidden}
+.item{border:1px solid rgba(29,29,31,.12);box-shadow:0 2px 8px rgba(29,29,31,.24)}
+.menu-items .item+.item{position:relative}
+.menu-items .item+.item::before{content:"";position:absolute;top:-7px;left:16px;right:16px;border-top:1px solid rgba(29,29,31,.9)}
 .item.on{box-shadow:0 0 0 2px var(--blue);background:#fff}
 .add{flex:1;align-self:stretch;padding:14px 16px;text-align:left;font-size:17px;font-weight:600}
 .add:active{background:rgba(10,132,255,.1)}
@@ -114,6 +121,7 @@
 .net.ok{background:color-mix(in srgb,var(--green) 30%,white)}
 .add{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px}
 .add small{font-size:13px;font-weight:500;color:var(--mute)}
+.add .menu-description{font-size:13px;font-weight:400;line-height:1.35;color:#515158;white-space:normal}
 .qty .note{font-size:18px}
 .mesa{background-color:rgba(255,255,255,.3);background-image:linear-gradient(145deg,rgba(var(--rgb),.42),rgba(var(--rgb),.18));border:1px solid rgba(var(--rgb),.55);border-radius:22px}
 .grid.tres{grid-template-columns:repeat(3,1fr)}
