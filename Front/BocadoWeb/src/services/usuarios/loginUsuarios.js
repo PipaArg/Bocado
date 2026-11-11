@@ -1,12 +1,17 @@
+
 import { baseURL } from "../../constants/baseURL";
-import axios from 'axios';
+import axios from "axios";
 
-export const loginUsuarios= async () => {
+export const loginUsuarios = async (credenciales) => {
     try {
-        const respuesta = await axios.post(baseURL+'/api/usuarios/login')
-        return respuesta.data
-    } catch (error) {
-        return error
-    }
+        const respuesta = await axios.post(
+            baseURL + "/api/usuarios/login",
+            credenciales
+        );
 
-}
+        return respuesta.data;
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        throw error;
+    }
+};

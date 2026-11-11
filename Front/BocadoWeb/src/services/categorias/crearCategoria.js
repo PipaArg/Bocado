@@ -1,12 +1,17 @@
+
 import { baseURL } from "../../constants/baseURL";
-import axios from 'axios';
+import axios from "axios";
 
-export const crearCategoria= async () => {
+export const crearCategoria = async (datosCategoria) => {
     try {
-        const respuesta = await axios.post(baseURL+'/api/categorias/crearCategorias')
-        return respuesta.data
-    } catch (error) {
-        return error
-    }
+        const respuesta = await axios.post(
+            baseURL + "/api/categorias/crearCategoria",
+            datosCategoria
+        );
 
-}
+        return respuesta.data;
+    } catch (error) {
+        console.error("Error al crear categoría:", error);
+        throw error;
+    }
+};
