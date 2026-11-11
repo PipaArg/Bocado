@@ -155,7 +155,7 @@ export default function Reservas() {
                         {turnos.map((t) => (
                             <li key={t.id}>
                               <b>{String(t.hora).slice(0, 5)}</b>
-                              <span className="grow">{fechaLarga(t.fecha)}<small>{t.clienteNombre ?? "Sin cliente"} · {t.cantidadComensales}</small></span>
+                              <span className="grow">{fechaLarga(t.fecha)}<small>{t.cantidadComensales} {t.cantidadComensales === 1 ? "persona" : "personas"}</small></span>
                             </li>
                         ))}
                       </ul>

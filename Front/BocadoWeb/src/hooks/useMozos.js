@@ -93,7 +93,7 @@ export function useMozos() {
                 window.location.hash = "#/admin";
             }
         } catch (error) {
-            setErr(error.message);
+            setErr(error.response?.data?.mensaje || (error.response ? "No se pudo iniciar sesión" : "No se pudo conectar con el servidor"));
         }
     };
 
