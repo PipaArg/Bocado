@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const listarMesas = async () => {
     try {
-        const respuesta = await axios.get(baseURL + "api/mesas/listarMesas");
+        const respuesta = await axios.get(baseURL + "/api/mesas/listarMesas");
         return respuesta.data;
     } catch (error) {
         console.error("Error al listar las mesas:", error);

@@ -15,6 +15,7 @@ import { crearMesa } from "../services/mesas/crearMesa";
 import { actualizarMesa } from "../services/mesas/actualizarMesa";
 import { activarMesa } from "../services/mesas/activarMesa";
 import { desactivarMesa } from "../services/mesas/desactivarMesa";
+import { actualizarPlato } from "../services/platos/actualizarPlato";
 
 const usuarioVacio = { usuario: "", nombre: "", apellido: "", clave: "", nivel: "MOZO", activo: true };
 const categoriaVacia = { nombre: "", emoji: "" };
@@ -132,9 +133,8 @@ export default function Administracion() {
       categoriaId: Number(platoForm.categoriaId),
     };
 
-    // Si tienes un servicio actualizarPlato, lo puedes invocar aquí. Si solo tienes crearPlato, ajustalo según el service correspondiente.
     const accion = editId
-        ? () => { throw new Error("Servicio de actualizar plato no definido aún"); }
+        ? () =>  actualizarPlato(editId, body)
         : () => crearPlato(body);
 
     ejecutar(accion, editId ? "Plato actualizado." : "Plato creado.");

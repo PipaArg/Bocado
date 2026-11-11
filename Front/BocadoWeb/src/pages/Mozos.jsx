@@ -53,7 +53,14 @@ export default function Mozos() {
               {vista === "mesas" && <MesasView {...mozosState} />}
               {vista === "mesa" && <MesaView {...mozosState} />}
               {vista === "menu" && <MenuView {...mozosState} />}
-              {vista === "items" && <ItemsView {...mozosState} />}
+
+                {vista === "items" && (
+                    <ItemsView
+                        {...mozosState}
+                        categoriaActual={categoriaActual}
+                    />
+                )}
+
             </div>
 
             {sheet === "perfil" && (
