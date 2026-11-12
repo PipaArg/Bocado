@@ -3,7 +3,7 @@ import css from "../styles/sobre-nosotros.css?inline";
 
 const equipo = [
   { nombre: "Macarena Molina", legajo: "Legajo: 1201726", color: "lavanda", foto: "/images/Maca.jpeg" },
-  { nombre: "Alexis Gandara", legajo: "Legajo: pendiente", color: "durazno" },
+  { nombre: "Alexis Gandara", legajo: "Legajo: 1142236", color: "durazno" , foto: "/images/Alexis.jpeg"  },
   { nombre: "Joaquin Lardizabal", legajo: "Legajo: 1091746", color: "menta", foto: "/images/joaquin.jpg" },
   { nombre: "Nicolas Piquero", legajo: "Legajo: 1133543", color: "rosa", foto: "/images/Nicolas.jpeg" },
   { nombre: "Gonzalo Eseiza", legajo: "Legajo: 1174034", color: "cielo", foto: "/images/Gonzalo.jpeg" },
