@@ -2,11 +2,11 @@ import Blobs from "../components/Blobs.jsx";
 import css from "../styles/sobre-nosotros.css?inline";
 
 const equipo = [
-  { nombre: "Integrante 1", legajo: "Legajo: pendiente", color: "lavanda" },
-  { nombre: "Integrante 2", legajo: "Legajo: pendiente", color: "durazno" },
-  { nombre: "Integrante 3", legajo: "Legajo: pendiente", color: "menta" },
-  { nombre: "Integrante 4", legajo: "Legajo: pendiente", color: "rosa" },
-  { nombre: "Integrante 5", legajo: "Legajo: pendiente", color: "cielo" },
+  { nombre: "Macarena Molina", legajo: "Legajo: pendiente", color: "lavanda" },
+  { nombre: "Alexis Gandara", legajo: "Legajo: pendiente", color: "durazno" },
+  { nombre: "Joaquin Lardizabal", legajo: "Legajo: pendiente", color: "menta" },
+  { nombre: "Nicolas Piquero", legajo: "Legajo: pendiente", color: "rosa" },
+  { nombre: "Gonzalo Eseiza", legajo: "Legajo: pendiente", color: "cielo" },
 ];
 
 function FotoPlaceholder({ color, nombre }) {

@@ -1,5 +1,7 @@
 package com.bocado.GestorRestaurante.api.model;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,6 +16,19 @@ import java.util.Objects;
 @Entity
 @Table(name = "turnos")
 public class Turno {
+
+    @ManyToOne // Muchos turnos usan la misma mesa en distintos momentos: ManyToOne.
+    @JoinColumn(name = "mesa_id")
+    private Mesa mesa;
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,11 +51,7 @@ public class Turno {
     private Pago pago;
 
     @ManyToMany
-    @JoinTable(
-            name = "turnos_platos",
-            joinColumns = @JoinColumn(name = "turno_id"),
-            inverseJoinColumns = @JoinColumn(name = "plato_id")
-    )
+    @JoinTable(name = "turnos_platos", joinColumns = @JoinColumn(name = "turno_id"), inverseJoinColumns = @JoinColumn(name = "plato_id"))
     private List<Plato> platos = new ArrayList<>();
 
     // Total a cobrar: suma del precio de todos los platos asignados al turno.
