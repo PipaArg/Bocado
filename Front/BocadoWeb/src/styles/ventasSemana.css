@@ -1,0 +1,22 @@
+/* Ventas de la semana (va dentro del reporte: usa rep-card de reportes.css) */
+.vs-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.vs-top h2{margin:0}
+.vs-total{font-size:20px;font-variant-numeric:tabular-nums}
+
+.vs-barras{display:flex;align-items:flex-end;gap:8px;height:170px;margin:18px 0 14px}
+.vs-col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;
+  padding:0;border:none;background:none;cursor:pointer;font:inherit}
+.vs-barra{width:100%;min-height:6px;border-radius:12px 12px 6px 6px;background:#d8dbe3;transition:height .3s,background .2s}
+.vs-col:hover .vs-barra{background:#b9bfcc}
+.vs-col small{font-size:12px;color:#6e6e73;text-transform:capitalize}
+.vs-activa .vs-barra{background:#ff7a59}
+.vs-activa small{color:#1d1d1f;font-weight:700}
+
+.vs-tarjeta{padding:16px 18px;border-radius:20px;background:#1d1d1f;color:#fff}
+.vs-monto{margin:8px 0 2px;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.vs-gris{margin:0;color:#a1a1a6;font-size:13px}
+.vs-var{padding:3px 9px;border-radius:8px;font-size:13px;font-weight:700}
+.vs-sube{background:#34c75933;color:#5ee38a}
+.vs-baja{background:#ff3b3033;color:#ff8a80}
+.vs-top-plato{display:flex;gap:12px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px dashed #ffffff40}
+.vs-numero{width:44px;height:44px;flex:none;border-radius:12px;background:#ff7a59;display:grid;place-items:center;font-weight:800}

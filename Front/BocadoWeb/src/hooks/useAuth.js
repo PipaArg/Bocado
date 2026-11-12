@@ -27,6 +27,6 @@ export const useAuth = () => {
     };
 
     const esAdmin = usuario?.nivel === "ADMIN";
-
-    return { usuario, esAdmin, cerrarSesion };
+    const esRecepcion = usuario?.nivel === "RECEPCIONISTA";
+    return { usuario, esAdmin, esRecepcion, cerrarSesion };
 };

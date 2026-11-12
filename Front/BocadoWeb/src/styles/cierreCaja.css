@@ -1,0 +1,22 @@
+/* Cierre de caja (va dentro del reporte: usa rep-card y rep-sub de reportes.css) */
+.caja-label{display:block;margin:14px 0 6px;font-size:13px;font-weight:600;color:#6e6e73}
+.caja-input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:12px 14px;border:1px solid #e5e5ea;border-radius:14px;background:#fff;color:#1d1d1f}
+.caja-input:focus{outline:3px solid #0a84ff55;border-color:#0a84ff}
+.caja-input:disabled{opacity:.5}
+.caja-dif{margin:10px 0 0;font-variant-numeric:tabular-nums}
+.caja-chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.caja-ok{background:#34c75922;color:#248a3d}
+.caja-sobra{background:#0a84ff22;color:#0a64c8}
+.caja-falta{background:#ff3b3022;color:#c4281c}
+.caja-gris{background:#8e8e9322;color:#6e6e73}
+.caja-aviso{margin-top:12px;color:#b36b00}
+.caja-nota{margin-top:10px}
+.caja-motivo{display:block;color:#6e6e73;font-size:12px;margin-top:2px}
+.caja-acciones{display:flex;gap:10px;margin-top:16px}
+.caja-acciones .caja-btn{margin-top:0}
+.caja-btn{flex:1;margin-top:16px;width:100%;padding:13px 20px;border:none;border-radius:14px;background:#0a84ff;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.caja-btn-sec{background:rgba(255,255,255,.9);color:#1d1d1f;border:1px solid #e5e5ea}
+.caja-btn:disabled{opacity:.4;cursor:default}
+.caja-scroll{overflow-x:auto}
+.caja-scroll th,.caja-scroll td{padding-right:16px}
+.caja-scroll th:last-child,.caja-scroll td:last-child{padding-right:0}

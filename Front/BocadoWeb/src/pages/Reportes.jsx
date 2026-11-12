@@ -1,4 +1,6 @@
 import { useReportes } from "../hooks/useReportes.js";
+import CierreCaja from "../components/CierreCaja.jsx";
+import VentasSemana from "../components/VentasSemana.jsx";
 import css from "../styles/reportes.css?inline";
 
 const plata = (n) => Number(n || 0).toLocaleString("es-AR", { style: "currency", currency: "ARS" });
@@ -57,6 +59,10 @@ export default function Reportes({ onSalir }) {
                                 </table>
                             </section>
 
+                            {/* NUEVO: ventas de los ultimos 7 dias */}
+                            <p className="rep-seccion">Últimos 7 días</p>
+                            <VentasSemana hasta={fecha} />
+
                             <p className="rep-seccion">Reservas de este día</p>
                             <section className="rep-kpis">
                                 <Tarjeta titulo="Turnos" valor={reporte.cantidadTurnos} />
@@ -99,6 +105,9 @@ export default function Reportes({ onSalir }) {
                                     </table>
                                 )}
                             </section>
+
+                            <p className="rep-seccion">Caja</p>
+                            <CierreCaja fecha={fecha} reporte={reporte} />
                         </>
                     )}
                 </main>

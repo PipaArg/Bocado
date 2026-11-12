@@ -3,6 +3,7 @@ import { HOY } from "../constants/reservas.js";
 import { pasado, emailOk } from "../lib/format.js";
 import { crearCliente } from "../services/clientes/crearCliente";
 import { crearTurno } from "../services/turnos/crearTurno";
+import { mensajeError } from "../utils/errores.js";
 
 export function useReservaForm(turnos, setTurnos, demo) {
     const [step, setStep] = useState(0);
@@ -61,9 +62,8 @@ export function useReservaForm(turnos, setTurnos, demo) {
             setCreado(res);
             setTurnos((t) => [res, ...t]);
         } catch (err) {
-            setError(/fetch|network/i.test(err.message)
-                ? "No se pudo conectar con el servidor. Revisá que la API esté corriendo y que CORS permita este origen."
-                : err.message);
+            setError(mensajeError(err));
+
         }
         setSending(false);
     };
