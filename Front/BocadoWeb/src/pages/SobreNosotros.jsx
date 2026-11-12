@@ -29,10 +29,10 @@ export default function SobreNosotros() {
       <Blobs />
       <div className="about-wrap">
         <header className="about-header">
-          <a className="about-brand" href="#/">bocado</a>
+          <a className="about-brand" href="/">bocado</a>
           <nav aria-label="Navegación">
-            <a href="#/">Reservas</a>
-            <a href="#/admin">Administración</a>
+            <a href="/">Reservas</a>
+            <a href="/admin">Administración</a>
           </nav>
         </header>
 

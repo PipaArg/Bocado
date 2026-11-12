@@ -4,7 +4,7 @@ import { useMozos } from "../hooks/useMozos.js";
 import { ESTADO, EVENTOS, NOTAS } from "../constants/mozos.js";
 import css from "../styles/mozos.css?inline";
 
-// Subcomponentes de vistas
+
 import LoginView from "../components/mozos/LoginView.jsx";
 import MesasView from "../components/mozos/MesasView.jsx";
 import MesaView from "../components/mozos/MesaView.jsx";
@@ -29,7 +29,7 @@ export default function Mozos() {
         <Blobs />
         <div className="shell">
           <header className="top">
-            <span className="logo">bocado <em>mozos</em></span>
+            <span className="logo">bocado <em>bienvenido</em></span>
             {mozo && (
                 <button className="avatar" onClick={() => setSheet("perfil")} aria-label="Perfil">
                   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
