@@ -1,15 +1,43 @@
+import { useEffect, useState } from "react";
 import { useReportes } from "../hooks/useReportes.js";
 import CierreCaja from "../components/CierreCaja.jsx";
 import VentasSemana from "../components/VentasSemana.jsx";
+import PendientesCobro from "../components/PendientesCobro.jsx";
 import css from "../styles/reportes.css?inline";
 
 const plata = (n) => Number(n || 0).toLocaleString("es-AR", { style: "currency", currency: "ARS" });
 
 const NOMBRE_METODO = { EFECTIVO: "Efectivo", TARJETA: "Tarjeta", MERCADO_PAGO: "Mercado Pago" };
-const NOMBRE_ESTADO = { PENDIENTE: "Pendientes", CONFIRMADO: "Confirmados", CANCELADO: "Cancelados" };
+const NOMBRE_ESTADO = {
+    PENDIENTE: "Pendientes", CONFIRMADO: "Confirmados", EN_CURSO: "En el salón",
+    FINALIZADO: "Finalizados", CANCELADO: "Cancelados",
+};
 
+/*
+ * Pagina de Reportes.
+ * Cuando el encargado cobra una mesa, hay que recargar TODO (KPIs, grafico,
+ * pendientes y caja). Para eso se "remonta" el contenido cambiando su key,
+ * y se le pasa la fecha que estaba elegida para no perderla.
+ */
 export default function Reportes({ onSalir }) {
+    const [recarga, setRecarga] = useState(0);
+    const [fechaGuardada, setFechaGuardada] = useState(null);
+
+    const recargar = (fecha) => {
+        setFechaGuardada(fecha);
+        setRecarga((r) => r + 1);
+    };
+
+    return <ContenidoReporte key={recarga} fechaInicial={fechaGuardada} onRecargar={recargar} onSalir={onSalir} />;
+}
+
+function ContenidoReporte({ fechaInicial, onRecargar, onSalir }) {
     const { fecha, setFecha, reporte, cargando, error } = useReportes();
+
+    // Al recargar, volvemos a la fecha que estaba elegida
+    useEffect(() => {
+        if (fechaInicial) setFecha(fechaInicial);
+    }, []);
 
     return (
         <div className="rep">
@@ -59,7 +87,9 @@ export default function Reportes({ onSalir }) {
                                 </table>
                             </section>
 
-                            {/* NUEVO: ventas de los ultimos 7 dias */}
+                            {/* NUEVO: el encargado cobra desde aca */}
+                            <PendientesCobro pendientes={reporte.pendientesDeCobro} onCobrado={() => onRecargar(fecha)} />
+
                             <p className="rep-seccion">Últimos 7 días</p>
                             <VentasSemana hasta={fecha} />
 
@@ -81,29 +111,6 @@ export default function Reportes({ onSalir }) {
                                     ))}
                                     </tbody>
                                 </table>
-                            </section>
-
-                            <section className="rep-card">
-                                <h2>Pendientes de cobro</h2>
-                                {reporte.pendientesDeCobro.length === 0 ? (
-                                    <p className="rep-sub">No hay mesas pendientes de cobro.</p>
-                                ) : (
-                                    <table>
-                                        <thead>
-                                        <tr><th>Turno</th><th>Hora</th><th>Cliente</th><th className="num">Total</th></tr>
-                                        </thead>
-                                        <tbody>
-                                        {reporte.pendientesDeCobro.map((p) => (
-                                            <tr key={p.turnoId}>
-                                                <td>#{p.turnoId}</td>
-                                                <td>{String(p.hora).slice(0, 5)}</td>
-                                                <td>{p.cliente}</td>
-                                                <td className="num">{plata(p.total)}</td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-                                )}
                             </section>
 
                             <p className="rep-seccion">Caja</p>

@@ -1,0 +1,6 @@
+/* Pendientes de cobro (va dentro del reporte) */
+.pc-scroll{overflow-x:auto}
+.pc-scroll th,.pc-scroll td{padding-right:14px}
+.pc-scroll th:last-child,.pc-scroll td:last-child{padding-right:0}
+.pc-btn{padding:8px 14px;border:none;border-radius:12px;background:#0a84ff;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.pc-btn:disabled{opacity:.4;cursor:default}
