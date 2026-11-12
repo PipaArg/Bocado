@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const leerSesion = () => {
+const leerSesion = () => { //recupera la información del usuario que está guardada en el navegador.
     try {
         return JSON.parse(sessionStorage.getItem("bocado.usuario") || "null");
     } catch {
