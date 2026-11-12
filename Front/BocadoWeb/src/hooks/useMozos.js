@@ -5,6 +5,8 @@ import useTurnos from "../hooks/useTurnos.js";
 import { nid } from "../lib/id.js";
 import { loginUsuarios } from "../services/usuarios/loginUsuarios";
 import { listarMesas } from "../services/mesas/listarMesas";
+import { obtenerSalon } from "../services/recepcion/recepcion.js";
+import { agregarPlatoTurno } from "../services/turnos/agregarPlatoTurno.js";
 
 export function useMozos() {
     const [mozo, setMozo] = useState(null);
@@ -58,17 +60,19 @@ export function useMozos() {
         setMesasError("");
         try {
             const lista = await listarMesas();
-            setMesas(lista
+            const salon = await obtenerSalon();
+            const enSalon = (id) => salon.find((s) => s.mesaId === id && s.ocupada); setMesas(lista
                 .filter((m) => m.activa && m.mozoId === usuarioAutenticado.id)
                 .map((m) => ({
                     id: m.id,
                     mozoId: m.mozoId,
                     num: m.numero,
                     cap: m.capacidad,
-                    estado: "LIBRE",
+                    estado: enSalon(m.id) ? (enSalon(m.id).turno.pagado ? "A_PAGAR" : "OCUPADA") : "LIBRE",
+                    turnoId: enSalon(m.id)?.turno.id ?? null,
                     hist: [],
-                    desde: null,
-                    quien: "",
+                    desde: enSalon(m.id) ? Date.now() : null,
+                    quien: enSalon(m.id)?.turno.cliente ?? "",
                     evento: "",
                 })));
         } catch (error) {
@@ -151,10 +155,24 @@ export function useMozos() {
 
     const restar = (id) => setCarrito((c) => c.map((p) => (p.id === id ? { ...p, cant: p.cant - 1 } : p)).filter((p) => p.cant > 0));
 
-    const confirmar = () => {
+    const confirmar = async () => {
         if (!mesaId) {
             setErr("TODO: conectar la API de pedidos de mesa.");
             return;
+        }
+        if (mesa?.turnoId) {
+            try {
+                for (const p of carrito) {
+                    for (let i = 0; i < p.cant; i++) {
+                        await agregarPlatoTurno(mesa.turnoId, p.id);
+                    }
+                }
+            } catch (error) {
+                window.alert("No se pudo guardar el pedido: " + (error.response?.data?.message || error.message));
+                return;
+            }
+        } else {
+            window.alert("Esta mesa no la sento recepcion: el pedido no se guarda en el sistema.");
         }
         upd(mesaId, (m) => ({ ...m, hist: [...m.hist, { id: nid(), ts: Date.now(), tipo: "pedido", items: carrito }] }));
         setCarrito([]); setVista("mesa");
